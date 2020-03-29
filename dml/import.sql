@@ -9,7 +9,8 @@ insert into schools (
 	censused_on,
 	pupils,
 	boys,
-	girls
+	girls,
+	coordinates
 )
 
 select
@@ -48,7 +49,42 @@ select
 
 	nullif(sr."NumberOfPupils", '')::integer,
 	nullif(sr."NumberOfBoys", '')::integer,
-	nullif(sr."NumberOfGirls", '')::integer
+	nullif(sr."NumberOfGirls", '')::integer,
+
+	case -- coordinates
+	when (sr."Easting" = '' or sr."Northing" = '')
+		then null
+	else
+		/*
+		 * convert to WGS84 (EPSG:4326), the *standard* coordinate system that's
+		 * used in GPS and online mapping tools
+		 *
+		 * https://en.wikipedia.org/wiki/World_Geodetic_System
+		 */
+		st_transform(
+			/*
+			 * transform the raw point to a British National Grid (EPSG:27700) one,
+			 * this is the format used by The Ordinance Survey
+			 *
+			 * https://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid
+			 */
+			st_setsrid(
+				/*
+				 * return a point with an unknown SRID using the raw easting/northing
+				 * values
+				 *
+				 * https://en.wikipedia.org/wiki/Easting_and_northing
+				 */
+				st_makepoint(
+					sr."Easting"::integer,
+					sr."Northing"::integer
+				),
+				27700
+			),
+			4326
+		)
+	end
+
 
 from
 	schools_raw sr;

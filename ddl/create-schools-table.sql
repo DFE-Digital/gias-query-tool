@@ -1,3 +1,5 @@
+create extension if not exists postgis;
+
 drop table if exists schools;
 
 create table schools (
@@ -11,5 +13,6 @@ create table schools (
 	censused_on date null,
 	pupils integer,
 	boys integer,
-	girls integer
+	girls integer,
+	coordinates geography(point)
 );
