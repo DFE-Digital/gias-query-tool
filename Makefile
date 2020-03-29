@@ -2,7 +2,7 @@ psql_command=psql -q
 database_name=gias
 
 refresh:	drop_database          \
-		 	create_database        \
+			create_database        \
 			create_types           \
 			create_holding_table   \
 			populate_holding_table \
