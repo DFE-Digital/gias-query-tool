@@ -1,5 +1,9 @@
+drop table if exists schools;
+
 create table schools (
 	urn integer primary key,
 	name varchar(120) not null,
-	establishment_type establishment not null
+	establishment_type establishment not null,
+	establishment_type_group establishment_group not null,
+	open boolean not null
 );
