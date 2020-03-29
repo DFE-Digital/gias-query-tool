@@ -14,5 +14,7 @@ create table schools (
 	pupils integer,
 	boys integer,
 	girls integer,
-	coordinates geography(point)
+	coordinates geography(point),
+	ofsted_rating ofsted_rating,
+	phase phase
 );

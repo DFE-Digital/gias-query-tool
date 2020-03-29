@@ -10,7 +10,9 @@ insert into schools (
 	pupils,
 	boys,
 	girls,
-	coordinates
+	coordinates,
+	ofsted_rating,
+	phase
 )
 
 select
@@ -83,8 +85,10 @@ select
 			),
 			4326
 		)
-	end
+	end,
 
+	nullif(sr."OfstedRating (name)", '')::ofsted_rating,
+	nullif(sr."PhaseOfEducation (name)", '')::phase
 
 from
 	schools_raw sr;

@@ -21,6 +21,8 @@ create_holding_table:
 create_types:
 	${psql_command} ${database_name} < ddl/types/establishment.sql
 	${psql_command} ${database_name} < ddl/types/establishment_group.sql
+	${psql_command} ${database_name} < ddl/types/ofsted_rating.sql
+	${psql_command} ${database_name} < ddl/types/phase.sql
 
 create_schools_table:
 	${psql_command} ${database_name} < ddl/create-schools-table.sql
