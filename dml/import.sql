@@ -10,6 +10,7 @@ insert into schools (
 	pupils,
 	boys,
 	girls,
+	gender,
 	coordinates,
 	ofsted_rating,
 	phase
@@ -52,6 +53,7 @@ select
 	nullif(sr."NumberOfPupils", '')::integer,
 	nullif(sr."NumberOfBoys", '')::integer,
 	nullif(sr."NumberOfGirls", '')::integer,
+	nullif(sr."Gender (name)", '')::gender,
 
 	case -- coordinates
 	when (sr."Easting" = '' or sr."Northing" = '')
