@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+STDOUT.puts(STDIN.read.scrub)
