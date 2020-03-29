@@ -5,5 +5,11 @@ create table schools (
 	name varchar(120) not null,
 	establishment_type establishment not null,
 	establishment_type_group establishment_group not null,
-	open boolean not null
+	open boolean not null,
+	opened_on date null,
+	closed_on date null,
+	censused_on date null,
+	pupils integer,
+	boys integer,
+	girls integer
 );
