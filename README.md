@@ -1,31 +1,76 @@
-1. download
+# (Unofficial) GIAS Query Toolkit
 
-	wget https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/edubasealldata20200328.csv
+Ever wanted to write a quick query against the [Get Information About
+Schools](https://get-information-schools.service.gov.uk/) dataset but couldn't
+because it's provided in an unwieldy CSV file that's not properly-encoded and
+has too many columns?
 
-2. cleanse
+Great, you're in the right place!
 
-	scripts/cleanse < edubasealldata20200328.csv > edubasealldata20200328-cleansed.csv
+## Example queries
 
-3. fix line endings
 
-	scripts/fix-line-endings < edubasealldata20200328.csv > edubasealldata20200328-cleansed.csv
 
-4. generate create table statement using csvsql
+## Getting up and running
 
-	csvsql -v -i postgresql edubasealldata20200328-cleansed.csv > out.sql
+### Prerequisites
+
+* [**Ruby**](https://www.ruby-lang.org/en/), only used for scrubbing and correcting line endings in the GIAS CSV
+* [**GNU Make**](https://www.gnu.org/software/make/), used to run the automatic download and import
+* [**PostgreSQL**](https://www.postgresql.org/) with an local superuser account
+* [**PostGIS**](https://postgis.net/) for geographic query goodness
+
+### Running the command
+
+```bash
+make
+```
+
+## Manual importing
+
+### 1. Download
+
+```bash
+wget https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/edubasealldata20200328.csv
+```
+
+### 2. Cleanse
+
+```bash
+scripts/cleanse < edubasealldata20200328.csv > edubasealldata20200328-cleansed.csv
+```
+
+### 3. Fix line endings
+
+```bash
+scripts/fix-line-endings < edubasealldata20200328.csv > edubasealldata20200328-cleansed.csv
+```
+
+### 4. Generate create table statement using csvsql
+
+```bash
+csvsql -v -i postgresql edubasealldata20200328-cleansed.csv > out.sql
+```
 	
-5. create a new empty database
+### 5. Create a new empty database
 
-	createdb gias
+```bash
+createdb gias
+```
 
-6. create table for raw data
+### 6. Create database objects
 
-	psql gias < ddl/create-holding-table.sql
+Use the scripts in the `ddl` directory to create the required objects for the
+database, use the `Makefile` for guidance
 
-7. copy data
+### 8. Copy raw data
 
-	psql gias --command "\copy schools_raw from 'edubasealldata20200328-cleansed-fixed.csv' with csv header"
+```bash
+psql gias --command "\copy schools_raw from 'edubasealldata20200328-cleansed-fixed.csv' with csv header"
+```
 
-8. build final dataset
+### 9. Import
 
-9. drop holding table and cleanup
+```bash
+psql < dml/import.sql
+```
