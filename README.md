@@ -75,6 +75,52 @@ Obligatory sense check 🧐
 
 Looks good!
 
+### "Which 10 local authorities have the highest capacity secondary schools?" 🤨
+
+```sql
+with highest_capacity_schools as (
+	select
+		distinct on(local_authority) -- one school per LA
+
+		local_authority,
+		name as school_name,
+		capacity
+	from
+		open_schools
+	where
+		phase = 'Secondary'
+	and
+		capacity is not null
+	order by
+		local_authority,
+		capacity desc
+)
+select
+	local_authority,
+	school_name,
+	capacity
+from
+	highest_capacity_schools
+order by
+	capacity desc
+limit 10;
+
+┌─────────────────────────┬─────────────────────────────────┬──────────┐
+│     local_authority     │           school_name           │ capacity │
+╞═════════════════════════╪═════════════════════════════════╪══════════╡
+│ Nottinghamshire         │ Ashfield Comprehensive School   │     3146 │
+│ Devon                   │ Exmouth Community College       │     2850 │
+│ Redbridge               │ Beal High School                │     2840 │
+│ Milton Keynes           │ Stantonbury International       │     2669 │
+│ West Sussex             │ Steyning Grammar School         │     2455 │
+│ Kent                    │ Oasis Academy Isle of Sheppey   │     2450 │
+│ Croydon                 │ Harris Academy South Norwood    │     2450 │
+│ Dorset                  │ The Thomas Hardye School        │     2392 │
+│ North East Lincolnshire │ Tollbar Academy                 │     2355 │
+│ Brighton and Hove       │ Cardinal Newman Catholic School │     2262 │
+└─────────────────────────┴─────────────────────────────────┴──────────┘
+```
+
 ## Getting up and running
 
 ### Prerequisites
@@ -150,5 +196,6 @@ alphabetic position](https://www.postgresql.org/docs/12/datatype-enum.html#id-1.
 
 | Word                                                         | Definition                                                                                                                                                     |
 | --------------                                               | ----------                                                                                                                                                     |
-| [URN](https://en.wikipedia.org/wiki/Unique_Reference_Number) | A six-digit number used by the UK government to identify educational establishments in the United Kingdom.                                                     |
+| EduBase                                                      | The old name for [Get information about schools](https://get-information-schools.service.gov.uk/) (GIAS)                                                       |
 | [Ofsted](https://www.gov.uk/government/organisations/ofsted) | The Office for Standards in Education, Children's Services and Skills (Ofsted) is a non-ministerial department of the UK government, reporting to Parliament.A |
+| [URN](https://en.wikipedia.org/wiki/Unique_Reference_Number) | A six-digit number used by the UK government to identify educational establishments in the United Kingdom.                                                     |
