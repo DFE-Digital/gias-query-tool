@@ -29,7 +29,7 @@ create_database:
 	createdb ${database_name}
 
 create_holding_table:
-	${psql_command} ${database_name} < ddl/tables/raw_schools.sql
+	${psql_command} ${database_name} < ddl/tables/schools_raw.sql
 
 create_types:
 	${psql_command} ${database_name} < ddl/types/establishment.sql
