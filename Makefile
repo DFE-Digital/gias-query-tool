@@ -6,15 +6,17 @@ fixed_filename=fixed_and_cleansed.csv
 database_name=gias
 data_dir=tmp
 
-refresh: 	download_gias_data     \
-			drop_database          \
-			create_database        \
-			create_types           \
-			create_holding_table   \
-			populate_holding_table \
-			create_schools_table   \
-			create_views           \
-			import
+reload: download_gias_data refresh
+
+refresh: drop_database          \
+		 create_database        \
+		 create_types           \
+		 create_holding_table   \
+		 populate_holding_table \
+		 create_schools_table   \
+		 create_views           \
+		 import
+
 
 download_gias_data:
 	rm tmp/*.csv

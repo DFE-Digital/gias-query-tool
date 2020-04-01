@@ -13,7 +13,12 @@ insert into schools (
 	gender,
 	coordinates,
 	ofsted_rating,
-	phase
+	phase,
+	local_authority,
+	free_school_meals_percentage,
+	start_age,
+	finish_age,
+	capacity
 )
 
 select
@@ -90,7 +95,12 @@ select
 	end,
 
 	nullif(sr."OfstedRating (name)", '')::ofsted_rating,
-	nullif(sr."PhaseOfEducation (name)", '')::phase
+	nullif(sr."PhaseOfEducation (name)", '')::phase,
+	sr."LA (name)",
+	nullif(sr."PercentageFSM", '')::decimal,
+	nullif(sr."StatutoryLowAge", '')::integer,
+	nullif(sr."StatutoryHighAge", '')::integer,
+	nullif(sr."SchoolCapacity", '')::integer
 
 from
 	schools_raw sr;
