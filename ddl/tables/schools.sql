@@ -22,5 +22,6 @@ create table schools (
 	free_school_meals_percentage numeric,
 	start_age integer,
 	finish_age integer,
-	capacity integer
+	capacity integer,
+	rural_urban_classification rural_urban_classification
 );

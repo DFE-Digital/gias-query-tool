@@ -15,7 +15,8 @@ refresh: drop_database          \
 		 populate_holding_table \
 		 create_schools_table   \
 		 create_views           \
-		 import
+		 import                 \
+		 refresh_views
 
 
 download_gias_data:
@@ -39,6 +40,7 @@ create_types:
 	${psql_command} ${database_name} < ddl/types/gender.sql
 	${psql_command} ${database_name} < ddl/types/ofsted_rating.sql
 	${psql_command} ${database_name} < ddl/types/phase.sql
+	${psql_command} ${database_name} < ddl/types/rural_urban_classification.sql
 
 create_schools_table:
 	${psql_command} ${database_name} < ddl/tables/schools.sql
@@ -51,3 +53,6 @@ populate_holding_table:
 
 import:
 	${psql_command} ${database_name} < dml/import.sql
+
+refresh_views:
+	${psql_command} ${database_name} < ddl/refresh/refresh_open_schools.sql

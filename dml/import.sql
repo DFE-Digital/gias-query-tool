@@ -18,7 +18,8 @@ insert into schools (
 	free_school_meals_percentage,
 	start_age,
 	finish_age,
-	capacity
+	capacity,
+	rural_urban_classification
 )
 
 select
@@ -100,7 +101,8 @@ select
 	nullif(sr."PercentageFSM", '')::decimal,
 	nullif(sr."StatutoryLowAge", '')::integer,
 	nullif(sr."StatutoryHighAge", '')::integer,
-	nullif(sr."SchoolCapacity", '')::integer
+	nullif(sr."SchoolCapacity", '')::integer,
+	nullif(sr."UrbanRural (name)", '')::rural_urban_classification
 
 from
 	schools_raw sr;
