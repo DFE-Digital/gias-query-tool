@@ -11,6 +11,70 @@ This set of tools downloads and imports the data into a locally-running PostgreS
 database and lets you take advantage of [PostGIS](https://postgis.net/) to supercharge
 your queries.
 
+## Getting up and running
+
+### Prerequisites
+
+* [**Ruby**](https://www.ruby-lang.org/en/), only used for scrubbing and correcting line endings in the GIAS CSV
+* [**GNU Make**](https://www.gnu.org/software/make/), used to run the automatic download and import
+* [**PostgreSQL**](https://www.postgresql.org/) with an local superuser account
+* [**PostGIS**](https://postgis.net/) for geographic query goodness
+
+### Running the command
+
+To download, cleanse, import and build the data objects only a single command
+should be required.
+
+```bash
+$ make
+```
+
+When debugging, use `make refresh` to run the import steps without repeatedly downloading
+the export file.
+
+```bash
+$ make refresh
+```
+
+## Manual importing
+
+The entire import, apart from file cleansing, is written in standard SQL. Executing
+the statements needs to be done in the correct order, the `Makefile` is the best
+place to get a feel for how it works.
+
+## Tables and views
+
+The importer creates the following database objects:
+
+| Name                         | Type                | Description                                                        |
+| ----                         | ----                | -----------                                                        |
+| `schools`                    | `table`             | All schools, both open and closed                                  |
+| `open_schools`               | `materialized view` | Only open schools                                                  |
+| `regions`                    | `table`             | England's regions and associated gegoraphic information            |
+| `local_authorities`          | `table`             | England's local authorities and associated gegoraphic information  |
+| `establishment`              | `type`              | School types (eg. Foundation school, Free school)                  |
+| `establishment_group`        | `type`              | School categories (eg. Independent Schools, Universities, Colleges |
+| `gender`                     | `type`              | School gender policies (eg. Boys, Girls, Mixed)                    |
+| `ofsted_rating`              | `type`              | All Ofsted ratings, including deprecated ones                      |
+| `phase`                      | `type`              | School phases (eg. Secondary, Primary, 16 plus)                    |
+| `rural_urban_classification` | `type`              | Classification of a school's setting, source links in definition   |
+
+
+## FAQs
+
+### Why use [enumerated types](https://www.postgresql.org/docs/12/datatype-enum.html) when you could've just used a `varchar`?
+
+Efficiency aside, the main reason is to allow [ordering by _rank_ rather than
+alphabetic position](https://www.postgresql.org/docs/12/datatype-enum.html#id-1.5.7.15.6).
+
+## Nomenclature
+
+| Word                                                         | Definition                                                                                                                                                     |
+| --------------                                               | ----------                                                                                                                                                     |
+| EduBase                                                      | The old name for [Get information about schools](https://get-information-schools.service.gov.uk/) (GIAS)                                                       |
+| [Ofsted](https://www.gov.uk/government/organisations/ofsted) | The Office for Standards in Education, Children's Services and Skills (Ofsted) is a non-ministerial department of the UK government, reporting to Parliament.A |
+| [URN](https://en.wikipedia.org/wiki/Unique_Reference_Number) | A six-digit number used by the UK government to identify educational establishments in the United Kingdom.                                                     |
+
 ## Example queries
 
 ### "What's the breakdown of school genders by Ofsted rating?" 😕
@@ -75,127 +139,49 @@ Obligatory sense check 🧐
 
 Looks good!
 
-### "Which 10 local authorities have the highest capacity secondary schools?" 🤨
+### "List all the currently-open schools in London excluding those in Kensington and Chelsea, Southwark, and Tower Hamlets" 🤨
 
 ```sql
-with highest_capacity_schools as (
-	select
-		distinct on(local_authority) -- one school per LA
-
-		local_authority,
-		name as school_name,
-		capacity
-	from
-		open_schools
-	where
-		phase = 'Secondary'
-	and
-		capacity is not null
-	order by
-		local_authority,
-		capacity desc
+with local_authorities_to_exclude as (
+  select
+    st_union(edge) as edges                  -- union multiple edges into a single geometry
+  from
+    local_authorities
+  where
+    name in (
+      'Kensington and Chelsea',
+      'Southwark',
+      'Tower Hamlets'
+    )
 )
 select
-	local_authority,
-	school_name,
-	capacity
+  distinct on (urn)
+  os.urn,
+  os.name,
+  os.coordinates
 from
-	highest_capacity_schools
-order by
-	capacity desc
-limit 10;
-
-┌─────────────────────────┬─────────────────────────────────┬──────────┐
-│     local_authority     │           school_name           │ capacity │
-╞═════════════════════════╪═════════════════════════════════╪══════════╡
-│ Nottinghamshire         │ Ashfield Comprehensive School   │     3146 │
-│ Devon                   │ Exmouth Community College       │     2850 │
-│ Redbridge               │ Beal High School                │     2840 │
-│ Milton Keynes           │ Stantonbury International       │     2669 │
-│ West Sussex             │ Steyning Grammar School         │     2455 │
-│ Kent                    │ Oasis Academy Isle of Sheppey   │     2450 │
-│ Croydon                 │ Harris Academy South Norwood    │     2450 │
-│ Dorset                  │ The Thomas Hardye School        │     2392 │
-│ North East Lincolnshire │ Tollbar Academy                 │     2355 │
-│ Brighton and Hove       │ Cardinal Newman Catholic School │     2262 │
-└─────────────────────────┴─────────────────────────────────┴──────────┘
+  open_schools os
+inner join                                   -- join on region containing coordinates
+  regions r
+    on st_contains(
+      r.edge,
+      os.coordinates::geometry
+    )
+inner join                                   -- exclude the named LAs from above
+  local_authorities la
+    on not st_contains(
+      (select edges from local_authorities_to_exclude),
+      os.coordinates::geometry
+    )
+where
+  r.name = 'London'
+;
 ```
 
-## Getting up and running
+There are too many results to list, but here's a screenshot displaying the results in
+[QGIS](https://qgis.org/). Note that QGIS fully supports PostGIS, all queries that
+include a geospatial column can be displayed and manipulated by the software and used
+to [create reports](https://docs.qgis.org/3.10/en/docs/user_manual/print_composer/create_reports.html) or
+perform [advanced queries](https://www.qgistutorials.com/en/docs/performing_spatial_queries.html).
 
-### Prerequisites
-
-* [**Ruby**](https://www.ruby-lang.org/en/), only used for scrubbing and correcting line endings in the GIAS CSV
-* [**GNU Make**](https://www.gnu.org/software/make/), used to run the automatic download and import
-* [**PostgreSQL**](https://www.postgresql.org/) with an local superuser account
-* [**PostGIS**](https://postgis.net/) for geographic query goodness
-
-### Running the command
-
-```bash
-make
-```
-
-## Manual importing
-
-### 1. Download
-
-```bash
-wget https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/edubasealldata20200328.csv
-```
-
-### 2. Cleanse
-
-```bash
-scripts/cleanse < edubasealldata20200328.csv > edubasealldata20200328-cleansed.csv
-```
-
-### 3. Fix line endings
-
-```bash
-scripts/fix-line-endings < edubasealldata20200328.csv > edubasealldata20200328-cleansed.csv
-```
-
-### 4. Generate create table statement using csvsql
-
-```bash
-csvsql -v -i postgresql edubasealldata20200328-cleansed.csv > out.sql
-```
-	
-### 5. Create a new empty database
-
-```bash
-createdb gias
-```
-
-### 6. Create database objects
-
-Use the scripts in the `ddl` directory to create the required objects for the
-database, use the `Makefile` for guidance
-
-### 8. Copy raw data
-
-```bash
-psql gias --command "\copy schools_raw from 'edubasealldata20200328-cleansed-fixed.csv' with csv header"
-```
-
-### 9. Import
-
-```bash
-psql < dml/import.sql
-```
-
-## FAQs
-
-### Why use [enums](https://www.postgresql.org/docs/12/datatype-enum.html) when you could've just used a `varchar`?
-
-Efficiency aside, the main reason is to allow [ordering by _rank_ rather than
-alphabetic position](https://www.postgresql.org/docs/12/datatype-enum.html#id-1.5.7.15.6).
-
-## Nomenclature
-
-| Word                                                         | Definition                                                                                                                                                     |
-| --------------                                               | ----------                                                                                                                                                     |
-| EduBase                                                      | The old name for [Get information about schools](https://get-information-schools.service.gov.uk/) (GIAS)                                                       |
-| [Ofsted](https://www.gov.uk/government/organisations/ofsted) | The Office for Standards in Education, Children's Services and Skills (Ofsted) is a non-ministerial department of the UK government, reporting to Parliament.A |
-| [URN](https://en.wikipedia.org/wiki/Unique_Reference_Number) | A six-digit number used by the UK government to identify educational establishments in the United Kingdom.                                                     |
+![Schools in London minus Kensington and Chelsea, Tower Hamlets and Southwark](docs/images/london-schools.png)
