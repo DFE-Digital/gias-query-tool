@@ -67,6 +67,34 @@ The importer creates the following database objects:
 Efficiency aside, the main reason is to allow [ordering by _rank_ rather than
 alphabetic position](https://www.postgresql.org/docs/12/datatype-enum.html#id-1.5.7.15.6).
 
+### I want to query a column that's not included in the import, how do I add it?
+
+1. Add your desired column to the `create` statement in `ddl/tables/create_schools.sql`. Ensure
+   it is the correct datatype.
+2. Then add your new column name to the list of target columns in `dml/import_schools.sql` and
+   add a the corresponding column in the source data (i.e. the source CSV) to the `select` part
+   of the statement. For datatypes other than `varchar`, cast appropriately with `::new_datatype`
+   There are plenty of examples of casting in the file already
+3. See if it worked, run `make refresh` to drop everything and re-import
+
+### Where can I find and how do I import other geographic data?
+
+There are plenty of great sources for educational geographic data:
+
+* [Open Geography Portal](http://geoportal.statistics.gov.uk/)
+* [Office for National Statistics](https://www.ons.gov.uk/methodology/geography/geographicalproducts/)
+* [UK Data Service](https://www.ukdataservice.ac.uk/get-data/themes/education.aspx)
+* [National Records of Scotland](https://www.nrscotland.gov.uk/statistics-and-data/geography/our-products/census-datasets)
+
+Once you've found a useful dataset, select the [Shapefile](https://en.wikipedia.org/wiki/Shapefile) download option
+if available. Now we can use `shp2pgsql` to import it. It comes with a GUI which makes the process very simple.
+
+![shp2pgsql spatial data loader](docs/images/shp2pgsql.png)
+
+Alternatively, and more-flexibly (if the dataset you want isn't available as a
+Shapefile), you can use [GDAL](https://gdal.org/)'s
+[ogr2ogr](https://gdal.org/programs/ogr2ogr.html).
+
 ## Nomenclature
 
 | Word                                                         | Definition                                                                                                                                                     |
