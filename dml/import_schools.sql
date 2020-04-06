@@ -1,3 +1,15 @@
+/*
+ * users who have their collation set to US format (MYD) will
+ * get a 'date out of range' error when casting dates here.
+ *
+ * Force it to DMY.
+ *
+ * If you are unsure what yours is, check with
+ *
+ * show lc_collate;
+ */
+set datestyle to DMY;
+
 insert into schools (
 	urn,
 	name,
