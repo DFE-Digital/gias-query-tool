@@ -21,7 +21,7 @@ refresh: drop_database           \
 		 refresh_views
 
 download_gias_data:
-	rm tmp/*.csv
+	rm -f tmp/*.csv
 	wget https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/${gias_filename} --directory-prefix=${data_dir}
 	./scripts/cleanse < tmp/${gias_filename} > tmp/${clean_filename}
 	./scripts/fix-line-endings < tmp/${clean_filename} > tmp/${fixed_filename}
