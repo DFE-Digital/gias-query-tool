@@ -49,6 +49,7 @@ The importer creates the following database objects:
 | Name                         | Type                | Description                                                        |
 | ----                         | ----                | -----------                                                        |
 | `schools`                    | `table`             | All schools, both open and closed                                  |
+| `deprivation_pupil_premium`  | `table`             | [DPP information](https://www.gov.uk/guidance/pupil-premium-effective-use-and-accountability) broken down by school |
 | `open_schools`               | `materialized view` | Only open schools                                                  |
 | `regions`                    | `table`             | England's regions and associated gegoraphic information            |
 | `local_authorities`          | `table`             | England's local authorities and associated gegoraphic information  |
@@ -166,6 +167,60 @@ Obligatory sense check 🧐
 ![larkhill_primary](docs/images/larkhill_primary.png)
 
 Looks good!
+
+### "I'd like a percentile summary of the twenty local authorities with the lowest average [deprivation pupil premium](https://www.gov.uk/guidance/pupil-premium-effective-use-and-accountability), excluding authorities with fewer than fifteen qualifying schools" 🤭
+
+
+```sql
+select
+    os.local_authority,
+    percentile_disc(0.4) within group (order by dpp.allocation) as "P40", -- discrete percentile at 0.4 (40%)
+    percentile_disc(0.5) within group (order by dpp.allocation) as "P50",
+    percentile_disc(0.6) within group (order by dpp.allocation) as "P60",
+    percentile_disc(0.7) within group (order by dpp.allocation) as "P70",
+    percentile_disc(0.8) within group (order by dpp.allocation) as "P80",
+    percentile_disc(0.9) within group (order by dpp.allocation) as "P90"
+from
+    deprivation_pupil_premium dpp
+inner join
+    open_schools os on dpp.urn = os.urn
+group by
+    local_authority
+having
+    count(*) > 15                                                         -- only select local authorities with more than fifteen schools
+order by
+    avg(dpp.allocation::decimal) asc                                      -- order by DPP allocation ascending, we want the lowest
+limit
+    20
+;
+
+┌──────────────────────────┬────────────┬────────────┬────────────┬────────────┬─────────────┬─────────────┐
+│     local_authority      │    P40     │    P50     │    P60     │    P70     │     P80     │     P90     │
+╞══════════════════════════╪════════════╪════════════╪════════════╪════════════╪═════════════╪═════════════╡
+│ Rutland                  │ £13,200.00 │ £15,840.00 │ £18,480.00 │ £23,760.00 │  £43,560.00 │  £70,125.00 │
+│ North Yorkshire          │ £10,560.00 │ £15,895.00 │ £25,080.00 │ £40,920.00 │  £62,645.00 │  £98,175.00 │
+│ Cumbria                  │ £14,520.00 │ £20,570.00 │ £31,680.00 │ £48,620.00 │  £64,680.00 │ £118,800.00 │
+│ West Berkshire           │ £19,800.00 │ £25,080.00 │ £38,280.00 │ £52,800.00 │  £74,800.00 │ £100,320.00 │
+│ Windsor and Maidenhead   │ £26,400.00 │ £31,680.00 │ £43,560.00 │ £60,720.00 │  £74,800.00 │ £100,045.00 │
+│ Wokingham                │ £22,440.00 │ £34,320.00 │ £43,560.00 │ £58,080.00 │  £73,865.00 │  £91,080.00 │
+│ Herefordshire, County of │ £21,120.00 │ £26,400.00 │ £34,320.00 │ £50,490.00 │  £62,040.00 │ £118,800.00 │
+│ Wiltshire                │ £21,120.00 │ £31,680.00 │ £44,880.00 │ £59,400.00 │  £81,840.00 │ £114,840.00 │
+│ Buckinghamshire          │ £22,440.00 │ £29,040.00 │ £37,895.00 │ £47,685.00 │  £64,680.00 │ £135,465.00 │
+│ Shropshire               │ £18,480.00 │ £23,760.00 │ £40,920.00 │ £62,645.00 │  £83,215.00 │ £125,290.00 │
+│ Central Bedfordshire     │ £22,440.00 │ £35,640.00 │ £50,160.00 │ £63,360.00 │  £89,760.00 │ £128,095.00 │
+│ Oxfordshire              │ £22,440.00 │ £30,360.00 │ £42,240.00 │ £61,380.00 │  £88,440.00 │ £134,173.00 │
+│ Cheshire East            │ £19,800.00 │ £29,040.00 │ £47,520.00 │ £68,640.00 │ £100,320.00 │ £144,925.00 │
+│ South Gloucestershire    │ £26,400.00 │ £34,320.00 │ £43,560.00 │ £62,040.00 │  £81,840.00 │ £136,043.00 │
+│ Devon                    │ £21,120.00 │ £26,400.00 │ £44,880.00 │ £60,720.00 │  £92,400.00 │ £141,240.00 │
+│ Dorset                   │ £22,440.00 │ £31,790.00 │ £47,520.00 │ £68,640.00 │  £92,400.00 │ £130,680.00 │
+│ Gloucestershire          │ £23,760.00 │ £33,000.00 │ £49,060.00 │ £66,000.00 │  £96,305.00 │ £133,705.00 │
+│ Leicestershire           │ £30,360.00 │ £44,880.00 │ £58,080.00 │ £71,280.00 │  £91,080.00 │ £134,640.00 │
+│ Somerset                 │ £27,720.00 │ £36,960.00 │ £51,425.00 │ £72,600.00 │  £90,695.00 │ £153,120.00 │
+│ Surrey                   │ £33,000.00 │ £42,240.00 │ £56,540.00 │ £75,240.00 │  £99,110.00 │ £141,240.00 │
+└──────────────────────────┴────────────┴────────────┴────────────┴────────────┴─────────────┴─────────────┘
+```
+
+Try doing that in Excel 😅
 
 ### "List all the currently-open schools in London excluding those in Kensington and Chelsea, Southwark, and Tower Hamlets" 🤨
 
