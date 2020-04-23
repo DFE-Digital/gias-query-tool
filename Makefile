@@ -37,6 +37,7 @@ create_postgis:
 
 create_holding_tables:
 	${psql_command} ${database_name} < ddl/tables/create_schools_raw.sql
+	${psql_command} ${database_name} < ddl/tables/create_deprivation_pupil_premium_raw.sql
 	${psql_command} ${database_name} < ddl/tables/geo/create_electoral_regions_raw.sql
 	${psql_command} ${database_name} < ddl/tables/geo/create_local_authority_districts_raw.sql
 
@@ -50,6 +51,7 @@ create_types:
 
 create_data_tables:
 	${psql_command} ${database_name} < ddl/tables/create_schools.sql
+	${psql_command} ${database_name} < ddl/tables/create_deprivation_pupil_premium.sql
 	${psql_command} ${database_name} < ddl/tables/geo/create_regions.sql
 	${psql_command} ${database_name} < ddl/tables/geo/create_local_authorities.sql
 
@@ -58,16 +60,19 @@ create_views:
 
 populate_holding_tables:
 	${psql_command} ${database_name} --command "\copy schools_raw from 'tmp/${fixed_filename}' with csv header"
+	${psql_command} ${database_name} < dml/import_deprivation_pupil_premium_raw.sql
 	${psql_command} ${database_name} < dml/geo/import_electoral_regions.sql
 	${psql_command} ${database_name} < dml/geo/import_local_authority_districts.sql
 
 drop_holding_tables:
 	${psql_command} ${database_name} < ddl/tables/drop_schools_raw.sql
+	${psql_command} ${database_name} < ddl/tables/drop_deprivation_pupil_premium_raw.sql
 	${psql_command} ${database_name} < ddl/tables/geo/drop_electoral_regions_raw.sql
 	${psql_command} ${database_name} < ddl/tables/geo/drop_local_authority_districts_raw.sql
 
 populate_data_tables:
 	${psql_command} ${database_name} < dml/import_schools.sql
+	${psql_command} ${database_name} < dml/import_deprivation_pupil_premium.sql
 	${psql_command} ${database_name} < dml/geo/import_regions.sql
 	${psql_command} ${database_name} < dml/geo/import_districts.sql
 
