@@ -2,11 +2,11 @@ drop materialized view if exists open_schools;
 
 create materialized view open_schools as (
 	select
-        *
+		*
 	from
-        schools
+		schools
 	where
-        open
+		open
 );
 
 create index if not exists index_open_schools_urn on open_schools(urn);
