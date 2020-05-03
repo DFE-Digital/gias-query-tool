@@ -1,13 +1,13 @@
 select
-	ofsted_rating as "Ofsted rating",
-	gender,
+	os.ofsted_rating as "Ofsted rating",
+	os.gender,
 	count(*)
 from
-	open_schools
+	open_schools os
 group by
-	ofsted_rating,
-	gender
+	os.ofsted_rating,
+	os.gender
 order by
-	ofsted_rating,
-	gender
+	os.ofsted_rating,
+	os.gender
 \crosstabview
