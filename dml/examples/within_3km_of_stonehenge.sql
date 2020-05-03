@@ -1,10 +1,10 @@
 select
-	urn,
-	name
+	os.urn,
+	os.name
 from
-	open_schools
+	open_schools os
 where st_dwithin(
-	coordinates,                            -- Database column that holds the school's location
+	os.coordinates,                         -- Database column that holds the school's location
 	st_setsrid(
 		st_makepoint(-1.826194, 51.178868), -- Stonehenge's coords
 		4326                                -- World Geodetic System

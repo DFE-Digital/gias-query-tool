@@ -12,7 +12,7 @@ inner join
 	open_schools os
 		on dpp.urn = os.urn
 group by
-	local_authority
+	os.local_authority
 having
 	count(*) > 15                                                         -- only select local authorities with more than fifteen schools
 order by

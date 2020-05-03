@@ -110,17 +110,17 @@ Shapefile), you can use [GDAL](https://gdal.org/)'s
 
 ```sql
 select
-  ofsted_rating as "Ofsted rating",
-  gender,
+  os.ofsted_rating as "Ofsted rating",
+  os.gender,
   count(*)
 from
-  open_schools
+  open_schools os
 group by
-  ofsted_rating,
-  gender
+  os.ofsted_rating,
+  os.gender
 order by
-  ofsted_rating,
-  gender
+  os.ofsted_rating,
+  os.gender
 \crosstabview
 
 ┌──────────────────────┬──────┬───────┬───────┬────────┬────────────────┐
@@ -140,12 +140,12 @@ order by
 
 ```sql
 select
-  urn,
-  name
+  os.urn,
+  os.name
 from
-  open_schools
+  open_schools os
 where st_dwithin(
-  coordinates,                            -- Database column that holds the school's location
+  os.coordinates,                         -- Database column that holds the school's location
   st_setsrid(
     st_makepoint(-1.826194, 51.178868),   -- Stonehenge's coords
     4326                                  -- World Geodetic System
@@ -185,7 +185,7 @@ from
 inner join
     open_schools os on dpp.urn = os.urn
 group by
-    local_authority
+    os.local_authority
 having
     count(*) > 15                                                         -- only select local authorities with more than fifteen schools
 order by
@@ -227,9 +227,9 @@ Try doing that in Excel 😅
 ```sql
 with local_authorities_to_exclude as (
   select
-    st_union(edge) as edges                  -- union multiple edges into a single geometry
+    st_union(la.edge) as edges               -- union multiple edges into a single geometry
   from
-    local_authorities
+    local_authorities la
   where
     name in (
       'Kensington and Chelsea',
