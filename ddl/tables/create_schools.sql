@@ -21,5 +21,6 @@ create table schools (
 	start_age integer,
 	finish_age integer,
 	capacity integer,
-	rural_urban_classification rural_urban_classification
+	rural_urban_classification rural_urban_classification,
+	email_address varchar(64)
 );
