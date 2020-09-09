@@ -31,7 +31,8 @@ insert into schools (
 	start_age,
 	finish_age,
 	capacity,
-	rural_urban_classification
+	rural_urban_classification,
+	email_address
 )
 
 select
@@ -114,7 +115,12 @@ select
 	nullif(sr."StatutoryLowAge", '')::integer,
 	nullif(sr."StatutoryHighAge", '')::integer,
 	nullif(sr."SchoolCapacity", '')::integer,
-	nullif(sr."UrbanRural (name)", '')::rural_urban_classification
+	nullif(sr."UrbanRural (name)", '')::rural_urban_classification,
+	nullif(ear."MailEmail", '')
 
 from
-	schools_raw sr;
+	schools_raw sr
+left outer join
+	email_addresses_raw ear
+		on sr."URN" = ear."URN"
+;
