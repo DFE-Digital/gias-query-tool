@@ -6,5 +6,6 @@ create type ofsted_rating as enum (
 	'Requires improvement',
 	'Serious Weaknesses',
 	'Inadequate',
-	'Special Measures'
+	'Special Measures',
+	'Insufficient evidence'
 );
