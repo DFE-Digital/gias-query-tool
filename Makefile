@@ -1,8 +1,7 @@
 psql_command=psql -q
 today:=$(shell date "+%Y%m%d")
 gias_filename:=edubasealldata${today}.csv
-clean_filename=fixed.csv
-fixed_filename=fixed_and_cleansed.csv
+fixed_filename=edubasealldata${today}-fixed.csv
 database_name=gias
 data_dir=tmp
 
@@ -23,8 +22,7 @@ refresh: drop_database           \
 download_gias_data:
 	rm -f tmp/*.csv
 	wget https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/${gias_filename} --directory-prefix=${data_dir}
-	./scripts/cleanse < tmp/${gias_filename} > tmp/${clean_filename}
-	./scripts/fix-line-endings < tmp/${clean_filename} > tmp/${fixed_filename}
+	iconv tmp/${gias_filename} -f ISO8859-1 -t utf8 -o tmp/${fixed_filename}
 
 drop_database:
 	dropdb --if-exists ${database_name}
