@@ -1,3 +1,0 @@
-#!/usr/bin/env ruby
-
-STDOUT.puts(STDIN.read.gsub(%r(\r\n?), "\n"))
