@@ -79,3 +79,6 @@ populate_data_tables:
 
 refresh_views:
 	${psql_command} ${database_name} < ddl/refresh/refresh_open_schools.sql
+
+serve:
+	bundle exec ruby server.rb
