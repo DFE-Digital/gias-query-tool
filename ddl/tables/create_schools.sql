@@ -22,5 +22,7 @@ create table schools (
 	finish_age integer,
 	capacity integer,
 	rural_urban_classification rural_urban_classification,
-	email_address varchar(64)
+	email_address varchar(64),
+	latitude numeric generated always as (st_y(coordinates::geometry)) stored,
+	longitude numeric generated always as (st_x(coordinates::geometry)) stored
 );
