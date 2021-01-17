@@ -115,7 +115,20 @@ select
 	nullif(sr."StatutoryLowAge", '')::integer,
 	nullif(sr."StatutoryHighAge", '')::integer,
 	nullif(sr."SchoolCapacity", '')::integer,
-	nullif(sr."UrbanRural (name)", '')::rural_urban_classification,
+	/*
+	 * upper case all of the classifications to standardise
+	 */
+	upper(
+		replace(
+			replace(
+				nullif(sr."UrbanRural (name)", ''),
+				'(England/Wales) ',
+				''
+			),
+			'(Scotland) ',
+			''
+		)
+	)::rural_urban_classification,
 	nullif(ear."MailEmail", '')
 
 from

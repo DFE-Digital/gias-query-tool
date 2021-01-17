@@ -1,25 +1,31 @@
 drop type if exists rural_urban_classification;
 
+/*
+ * the classifications are now all upper case because the Scottish exist in
+ * multiple combinations of capitalisation, eg 'Large Urban Area', 'Large Urban
+ * area' and 'Large urban area'
+ */
 create type rural_urban_classification as enum (
 	-- https://www.gov.uk/government/collections/rural-urban-classification
-	'Rural village in a sparse setting',
-	'Urban major conurbation',
-	'Urban city and town',
-	'Rural town and fringe',
-	'Rural hamlet and isolated dwellings',
-	'Rural town and fringe in a sparse setting',
-	'Urban minor conurbation',
-	'Rural village',
-	'Urban city and town in a sparse setting',
-	'Rural hamlet and isolated dwellings in a sparse setting',
+	'RURAL VILLAGE IN A SPARSE SETTING',
+	'URBAN MAJOR CONURBATION',
+	'URBAN CITY AND TOWN',
+	'RURAL TOWN AND FRINGE',
+	'RURAL HAMLET AND ISOLATED DWELLINGS',
+	'RURAL TOWN AND FRINGE IN A SPARSE SETTING',
+	'URBAN MINOR CONURBATION',
+	'RURAL VILLAGE',
+	'URBAN CITY AND TOWN IN A SPARSE SETTING',
+	'RURAL HAMLET AND ISOLATED DWELLINGS IN A SPARSE SETTING',
 
 	-- ¯\_(ツ)_/¯
-	'Postcode in NI/Channel Is/IoM (pseudo)',
+	'POSTCODE IN NI/CHANNEL IS/IOM (PSEUDO)',
+	'(PSEUDO) CHANNEL ISLANDS/ISLE OF MAN',
 
 	-- https://www2.gov.scot/Topics/Statistics/About/Methodology/UrbanRuralClassification
-	'Large urban area (Scotland)',
-	'Remote rural (Scotland)',
-	'Accessible rural (Scotland)',
-	'Remote small town (Scotland)',
-	'Other urban area (Scotland)'
+	'ACCESSIBLE RURAL',
+	'LARGE URBAN AREA',
+	'OTHER URBAN AREA',
+	'REMOTE RURAL',
+	'REMOTE SMALL TOWN'
 );
