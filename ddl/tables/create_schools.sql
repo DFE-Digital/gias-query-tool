@@ -24,5 +24,7 @@ create table schools (
 	rural_urban_classification rural_urban_classification,
 	email_address varchar(64),
 	trust_code integer,
-	trust_name varchar(128)
+	trust_name varchar(128),
+	latitude numeric generated always as (st_y(coordinates::geometry)) stored,
+	longitude numeric generated always as (st_x(coordinates::geometry)) stored
 );
