@@ -32,7 +32,9 @@ insert into schools (
 	finish_age,
 	capacity,
 	rural_urban_classification,
-	email_address
+	email_address,
+	trust_code,
+	trust_name
 )
 
 select
@@ -129,7 +131,9 @@ select
 			''
 		)
 	)::rural_urban_classification,
-	nullif(ear."MailEmail", '')
+	nullif(ear."MailEmail", ''),
+	nullif(sr."Trusts (code)", '')::integer,
+	nullif(sr."Trusts (name)", '')
 
 from
 	schools_raw sr
