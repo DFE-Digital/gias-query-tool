@@ -22,7 +22,7 @@ refresh: drop_database           \
 download_gias_data:
 	rm -f tmp/*.csv
 	wget https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/${gias_filename} --directory-prefix=${data_dir}
-	iconv tmp/${gias_filename} -f ISO8859-1 -t utf8 -o tmp/${fixed_filename}
+	iconv -f ISO8859-1 -t UTF-8 tmp/${gias_filename} > tmp/${fixed_filename}
 
 drop_database:
 	dropdb --if-exists ${database_name}
