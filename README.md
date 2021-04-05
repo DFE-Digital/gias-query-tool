@@ -17,6 +17,8 @@ your queries.
 
 * [**Ruby**](https://www.ruby-lang.org/en/), only used for scrubbing and correcting line endings in the GIAS CSV
 * [**GNU Make**](https://www.gnu.org/software/make/), used to run the automatic download and import
+* [**GNU Iconv**](https://www.gnu.org/software/libiconv/), fix file encoding
+* [**GNU Wget**](https://www.gnu.org/software/wget/) for downloading the GIAS CSV file
 * [**PostgreSQL**](https://www.postgresql.org/) with an local superuser account
 * [**PostGIS**](https://postgis.net/) for geographic query goodness
 
@@ -26,14 +28,14 @@ To download, cleanse, import and build the data objects only a single command
 should be required.
 
 ```bash
-$ make
+make
 ```
 
 When debugging, use `make refresh` to run the import steps without repeatedly downloading
 the export file.
 
 ```bash
-$ make refresh
+make refresh
 ```
 
 ## Manual importing
@@ -59,7 +61,6 @@ The importer creates the following database objects:
 | `ofsted_rating`              | `type`              | All Ofsted ratings, including deprecated ones                      |
 | `phase`                      | `type`              | School phases (eg. Secondary, Primary, 16 plus)                    |
 | `rural_urban_classification` | `type`              | Classification of a school's setting, source links in definition   |
-
 
 ## FAQs
 
