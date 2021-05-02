@@ -15,7 +15,6 @@ your queries.
 
 ### Prerequisites
 
-* [**Ruby**](https://www.ruby-lang.org/en/), only used for scrubbing and correcting line endings in the GIAS CSV
 * [**GNU Make**](https://www.gnu.org/software/make/), used to run the automatic download and import
 * [**GNU Iconv**](https://www.gnu.org/software/libiconv/), fix file encoding
 * [**GNU Wget**](https://www.gnu.org/software/wget/) for downloading the GIAS CSV file
