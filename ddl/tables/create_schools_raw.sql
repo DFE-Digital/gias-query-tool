@@ -121,7 +121,6 @@ CREATE TABLE "schools_raw" (
 	"GSSLACode (name)" VARCHAR NOT NULL,
 	"Easting" VARCHAR,
 	"Northing" VARCHAR,
-	"CensusAreaStatisticWard (name)" VARCHAR,
 	"MSOA (name)" VARCHAR,
 	"LSOA (name)" VARCHAR,
 	"InspectorateName (name)" VARCHAR,
