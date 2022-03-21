@@ -143,5 +143,6 @@ CREATE TABLE "schools_raw" (
 	"QABReport" VARCHAR,
 	"CHNumber" VARCHAR,
 	"MSOA (code)" VARCHAR NOT NULL,
-	"LSOA (code)" VARCHAR NOT NULL
+	"LSOA (code)" VARCHAR NOT NULL,
+	"FSM" VARCHAR
 );
