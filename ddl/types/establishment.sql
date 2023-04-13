@@ -26,6 +26,7 @@ create type establishment as enum (
 	'Miscellaneous',
 	'Non-maintained special school',
 	'Offshore schools',
+	'Online provider',
 	'Other independent school',
 	'Other independent special school',
 	'Pupil referral unit',
