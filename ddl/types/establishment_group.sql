@@ -6,6 +6,7 @@ create type establishment_group as enum (
 	'Free Schools',
 	'Independent schools',
 	'Local authority maintained schools',
+	'Online provider',
 	'Other types',
 	'Special schools',
 	'Universities',
