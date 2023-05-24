@@ -43,6 +43,34 @@ The entire import, apart from file cleansing, is written in standard SQL. Execut
 the statements needs to be done in the correct order, the `Makefile` is the best
 place to get a feel for how it works.
 
+## Sending this data to BigQuery
+
+Dependencies
+
+```
+pip install bigquery-schema-generator
+brew install gcloud-cli
+gcloud auth login
+gcloud config set project PROJECT_ID
+```
+
+The script assumes you have a `gias` dataset in your BigQuery project and a
+Google Cloud Storage bucket called `rugged-abacus-uploads`.
+
+### Uploading
+
+First build the tables in your local database
+
+```bash
+make
+```
+
+Then run the import
+
+```bash
+make load_to_bq
+```
+
 ## Tables and views
 
 The importer creates the following database objects:
