@@ -4,6 +4,9 @@ gias_filename:=edubasealldata${today}.csv
 fixed_filename=edubasealldata${today}-fixed.csv
 database_name=gias
 data_dir=tmp
+export_dir=tmp/export
+gcs_bucket=rugged-abacus-uploads
+bq_dataset=gias
 
 reload: download_gias_data refresh
 
@@ -79,3 +82,47 @@ populate_data_tables:
 
 refresh_views:
 	${psql_command} ${database_name} < ddl/refresh/refresh_open_schools.sql
+
+export_views := $(shell psql ${database_name} -XtAc "SELECT matviewname FROM pg_catalog.pg_matviews WHERE schemaname NOT LIKE 'pg_%';")
+export_tables := $(shell psql ${database_name} -XtAc "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname='public' AND tablename NOT IN ('local_authorities', 'regions');")
+
+export_view_files := $(addprefix ${data_dir}/export/, $(addsuffix .csv, ${export_views}))
+export_table_files := $(addprefix ${data_dir}/export/, $(addsuffix .csv, ${export_tables}))
+
+${data_dir}/export/%.csv : 
+	@mkdir -p $(data_dir)/export
+	@echo "Extracting table $*"
+	@psql ${database_name} -XtAc "COPY $* TO STDOUT WITH (FORMAT csv, HEADER)" > $@
+
+${data_dir}/export/%.csv : 
+	@mkdir -p $(data_dir)/export
+	@echo "Extracting view $*"
+	@psql ${database_name} -XtAc "COPY (SELECT * FROM $*) TO STDOUT WITH (FORMAT csv, HEADER)" > $@
+
+schema_files := $(addprefix ${data_dir}/export/, $(addsuffix .schema.json, ${export_tables} ${export_views}))
+
+${data_dir}/export/%.schema.json : ${data_dir}/export/%.csv
+	@echo "Generating schema for $*"
+	@generate-schema --input_format csv < $^ > $@
+
+generate_schemas: ${schema_files} ${export_table_files} ${export_view_files}
+
+clean_export:
+	rm -rf ${export_dir}
+
+.PHONY=upload_to_gcs load_to_bq
+
+upload_to_gcs: ${export_table_files} ${export_view_files}
+	@for file in $^; do \
+		echo "Uploading $$file to GCS"; \
+		gcloud storage cp $$file gs://${gcs_bucket}/gias/`basename $$file`; \
+	done
+
+load_to_bq: ${export_table_files} ${export_view_files} generate_schemas
+	@for file in $^; do \
+		if [[ $$file == *.csv ]]; then \
+			echo "Loading $$file to BigQuery"; \
+			table=`basename $$file .csv`; \
+			bq load --source_format=CSV --skip_leading_rows=1 --schema=${data_dir}/export/$$table.schema.json ${bq_dataset}.$$table gs://${gcs_bucket}/gias/$$table.csv; \
+		fi \
+	done
