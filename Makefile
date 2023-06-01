@@ -118,7 +118,7 @@ upload_to_gcs: ${export_table_files} ${export_view_files}
 		gcloud storage cp $$file gs://${gcs_bucket}/gias/`basename $$file`; \
 	done
 
-load_to_bq: ${export_table_files} ${export_view_files} generate_schemas
+load_to_bq: ${export_table_files} ${export_view_files} generate_schemas upload_to_gcs
 	@for file in $^; do \
 		if [[ $$file == *.csv ]]; then \
 			echo "Loading $$file to BigQuery"; \
