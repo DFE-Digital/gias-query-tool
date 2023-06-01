@@ -12,6 +12,7 @@ set datestyle to DMY;
 
 insert into schools (
 	urn,
+	ukprn,
 	name,
 	establishment_type,
 	establishment_type_group,
@@ -39,6 +40,7 @@ insert into schools (
 
 select
 	sr."URN"::integer,
+	sr."UKPRN"::integer,
 	sr."EstablishmentName",
 	sr."TypeOfEstablishment (name)"::establishment,
 	sr."EstablishmentTypeGroup (name)"::establishment_group,
