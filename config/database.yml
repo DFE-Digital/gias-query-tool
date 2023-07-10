@@ -4,3 +4,8 @@ development:
   encoding: unicode
   database: gias
   pool: 2
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: gias_test

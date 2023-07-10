@@ -10,3 +10,11 @@ gem 'sinatra-activerecord'
 group :development do
   gem 'rerun'
 end
+
+group :development, :test do
+  gem 'rspec'
+end
+
+group :test do
+  gem 'rack-test'
+end

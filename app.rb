@@ -9,10 +9,13 @@ class School < ActiveRecord::Base
   end
 end
 
-before '/api/*' do
-  content_type 'application/json'
+class GIASApi < Sinatra::Base
+  before '/api/*' do
+    content_type 'application/json'
+  end
+
+  get '/api/schools' do
+    School.first(10).as_json.to_json
+  end
 end
 
-get '/api/schools' do
-  School.first(10).as_json.to_json
-end
