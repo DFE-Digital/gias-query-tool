@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 gem 'sinatra'
 gem 'puma'
 gem 'activesupport'
+gem 'rubocop'
+gem 'rubocop-rspec', require: false
 
 gem 'pg'
 gem 'sinatra-activerecord'
