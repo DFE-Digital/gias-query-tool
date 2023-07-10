@@ -144,5 +144,6 @@ CREATE TABLE "schools_raw" (
 	"CHNumber" VARCHAR,
 	"MSOA (code)" VARCHAR NOT NULL,
 	"LSOA (code)" VARCHAR NOT NULL,
-	"FSM" VARCHAR
+	"FSM" VARCHAR,
+	"AccreditationExpiryDate" VARCHAR
 );
