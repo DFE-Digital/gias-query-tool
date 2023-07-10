@@ -1,0 +1,6 @@
+example_id                                    | status | run_time        |
+--------------------------------------------- | ------ | --------------- |
+./spec/requests/get_open_schools_spec.rb[1:1] | passed | 0.04948 seconds |
+./spec/requests/get_school_spec.rb[1:1]       | passed | 0.02735 seconds |
+./spec/requests/get_school_spec.rb[1:2]       | passed | 0.00098 seconds |
+./spec/requests/get_schools_spec.rb[1:1]      | passed | 0.02702 seconds |
