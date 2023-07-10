@@ -2,6 +2,7 @@ drop table if exists schools;
 
 create table schools (
 	urn integer primary key,
+	ukprn integer,
 	name varchar(120) not null,
 	local_authority varchar(40) not null,
 	establishment_type establishment not null,
