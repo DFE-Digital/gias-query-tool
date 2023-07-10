@@ -296,3 +296,14 @@ to [create reports](https://docs.qgis.org/3.10/en/docs/user_manual/print_compose
 perform [advanced queries](https://www.qgistutorials.com/en/docs/performing_spatial_queries.html).
 
 ![Schools in London minus Kensington and Chelsea, Tower Hamlets and Southwark](docs/images/london-schools.png)
+
+## API
+
+This app bundles a JSON API written in Ruby.
+
+To work on the API:
+
+```
+bundle
+bundle exec rerun ruby app.rb # rerun will hot-reload your code
+```
