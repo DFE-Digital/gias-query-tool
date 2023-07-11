@@ -1,0 +1,206 @@
+openapi: 3.0.3
+info:
+  title: GIAS API
+  description: |-
+    Query GIAS data. Updated nightly.
+  version: "1.0"
+servers:
+  - url: https://#/api
+paths:
+  /schools:
+    get:
+      summary: Get a list of schools
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SchoolList"
+components:
+  schemas:
+    SchoolList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/School"
+    School:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: the Unique Reference Number (URN) for this school
+          format: int64
+          example: 100000
+        type:
+          type: string
+          example: 'school'
+        attributes:
+          "$ref": "#/components/schemas/SchoolAttributes"
+    SchoolAttributes:
+      type: object
+      properties:
+        ukprn:
+          type: 'string'
+          nullable: true
+          example: '12345678'
+          description: 'UK Provider Reference Number, for learning providers'
+        name:
+          type: 'string'
+          example: 'Oakleaf Primary School'
+        local_authority:
+          type: 'string'
+          example: 'City of London'
+        establishment_type:
+          type: string
+          enum:
+            - 'Academy 16 to 19 sponsor led'
+            - 'Academy 16-19 converter'
+            - 'Academy alternative provision converter'
+            - 'Academy alternative provision sponsor led'
+            - 'Academy converter'
+            - 'Academy special converter'
+            - 'Academy special sponsor led'
+            - 'Academy sponsor led'
+            - 'British schools overseas'
+            - 'City technology college'
+            - 'Community school'
+            - 'Community special school'
+            - 'Foundation school'
+            - 'Foundation special school'
+            - 'Free schools 16 to 19'
+            - 'Free schools alternative provision'
+            - 'Free schools special'
+            - 'Free schools'
+            - 'Further education'
+            - 'Higher education institutions'
+            - 'Institution funded by other government department'
+            - 'Local authority nursery school'
+            - 'Miscellaneous'
+            - 'Non-maintained special school'
+            - 'Offshore schools'
+            - 'Online provider'
+            - 'Other independent school'
+            - 'Other independent special school'
+            - 'Pupil referral unit'
+            - 'Secure units'
+            - 'Service children''s education'
+            - 'Sixth form centres'
+            - 'Special post 16 institution'
+            - 'Studio schools'
+            - 'University technical college'
+            - 'Voluntary aided school'
+            - 'Voluntary controlled school'
+            - 'Welsh establishment'
+        establishment_type_group:
+          type: string
+          enum:
+            - 'Academies'
+            - 'Colleges'
+            - 'Free Schools'
+            - 'Independent schools'
+            - 'Local authority maintained schools'
+            - 'Online provider'
+            - 'Other types'
+            - 'Special schools'
+            - 'Universities'
+            - 'Welsh schools'
+        open:
+          type: boolean
+        opened_on:
+          nullable: true
+          type: string
+          format: date-time
+        closed_on:
+          nullable: true
+          type: string
+          format: date-time
+        censused_on:
+          nullable: true
+          type: string
+          format: date-time
+        pupils:
+          nullable: true
+          type: integer
+          description: 'The number of pupils at this school'
+        girls:
+          nullable: true
+          type: integer
+          description: 'The number of girls at this school'
+        boys:
+          type: integer
+          nullable: true
+          description: 'The number of boys at this school'
+        gender:
+          nullable: true
+          description: 'Gender intake of this school'
+          enum:
+            - 'Boys'
+            - 'Girls'
+            - 'Mixed'
+            - 'Not applicable'
+        ofsted_rating:
+          nullable: true
+          enum:
+            - 'Outstanding'
+            - 'Good'
+            - 'Requires improvement'
+            - 'Serious Weaknesses'
+            - 'Inadequate'
+            - 'Special Measures'
+            - 'Insufficient evidence'
+        phase:
+          nullable: true
+          type: string
+          enum:
+            - 'Outstanding'
+            - 'Good'
+            - 'Requires improvement'
+            - 'Serious Weaknesses'
+            - 'Inadequate'
+            - 'Special Measures'
+            - 'Insufficient evidence'
+        free_school_meals_percentage:
+          nullable: true
+          type: number
+        start_age:
+          nullable: true
+          type: integer
+        finish_age:
+          nullable: true
+          type: integer
+        capacity:
+          nullable: true
+          type: integer
+        rural_urban_classification:
+          nullable: true
+          type: string
+          enum:
+          - 'RURAL VILLAGE IN A SPARSE SETTING'
+          - 'URBAN MAJOR CONURBATION'
+          - 'URBAN CITY AND TOWN'
+          - 'RURAL TOWN AND FRINGE'
+          - 'RURAL HAMLET AND ISOLATED DWELLINGS'
+          - 'RURAL TOWN AND FRINGE IN A SPARSE SETTING'
+          - 'URBAN MINOR CONURBATION'
+          - 'RURAL VILLAGE'
+          - 'URBAN CITY AND TOWN IN A SPARSE SETTING'
+          - 'RURAL HAMLET AND ISOLATED DWELLINGS IN A SPARSE SETTING'
+          - 'POSTCODE IN NI/CHANNEL IS/IOM (PSEUDO)'
+          - '(PSEUDO) CHANNEL ISLANDS/ISLE OF MAN'
+          - 'ACCESSIBLE RURAL'
+          - 'LARGE URBAN AREA'
+          - 'OTHER URBAN AREA'
+          - 'REMOTE RURAL'
+          - 'REMOTE SMALL TOWN'
+        email_address:
+          nullable: true
+          type: string
+        trust_code:
+          nullable: true
+          type: integer
+        trust_name:
+          nullable: true
+          type: string
