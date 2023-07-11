@@ -307,3 +307,13 @@ To work on the API:
 bundle
 bundle exec rerun rackup # rerun will hot-reload your code
 ```
+
+### API documentation
+
+API docs are generated with redocly (`npm i -g @redocly/cli@latest`).
+
+To rebuild, run
+
+```
+make docs
+```
