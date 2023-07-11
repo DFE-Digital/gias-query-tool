@@ -10,4 +10,9 @@ RSpec.describe 'GET /schools/:id' do
 
     expect(resp).to be_valid_against_openapi_schema('School')
   end
+
+  it 'returns 404 when appropriate' do
+    get '/api/schools/invalid'
+    expect(last_response.status).to eq(404)
+  end
 end

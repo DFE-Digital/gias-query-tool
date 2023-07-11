@@ -30,5 +30,7 @@ class GIASApi < Sinatra::Base
     school = School.find(params[:id])
 
     { data: school.as_json }.to_json
+  rescue ActiveRecord::RecordNotFound
+    halt(404)
   end
 end
