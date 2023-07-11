@@ -5,11 +5,27 @@ info:
     Query GIAS data. Updated nightly.
   version: "1.0"
 servers:
-  - url: https://#/api
+  - url: https://example.com/
 paths:
   /schools:
     get:
       summary: Get a list of schools
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SchoolList"
+  /schools/{school_id}:
+    get:
+      summary: Get a single school
+      parameters:
+        - in: path
+          name: school_id
+          schema:
+            type: integer
+          required: true
       responses:
         '200':
           description: Successful operation

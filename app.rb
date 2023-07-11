@@ -19,4 +19,10 @@ class GIASApi < Sinatra::Base
   get '/api/schools' do
     { data: School.first(10).as_json }.to_json
   end
+
+  get '/api/schools/:id' do
+    school = School.find(params[:id])
+
+    { data: school.as_json }.to_json
+  end
 end
