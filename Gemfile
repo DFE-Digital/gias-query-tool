@@ -19,4 +19,5 @@ end
 
 group :test do
   gem 'rack-test'
+  gem 'json-schema'
 end
