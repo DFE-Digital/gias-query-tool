@@ -4,6 +4,8 @@ require 'sinatra/activerecord'
 
 $LOAD_PATH.unshift settings.root + '/lib'
 
+require 'openapi3'
+
 class School < ActiveRecord::Base
   def as_json
     attrs = super.except('urn', 'coordinates')
@@ -14,6 +16,10 @@ end
 class GIASApi < Sinatra::Base
   before '/api/*' do
     content_type 'application/json'
+  end
+
+  get '/' do
+    send_file './docs/api-docs.html'
   end
 
   get '/api/schools' do

@@ -127,3 +127,6 @@ load_to_bq: ${export_table_files} ${export_view_files} generate_schemas upload_t
 			bq load --source_format=CSV --skip_leading_rows=1 --schema=${data_dir}/export/$$table.schema.json ${bq_dataset}.$$table gs://${gcs_bucket}/gias/$$table.csv; \
 		fi \
 	done
+
+docs:
+	redocly build-docs config/gias_api_v1.yml --output=docs/api-docs.html
