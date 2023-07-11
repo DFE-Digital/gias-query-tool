@@ -305,5 +305,5 @@ To work on the API:
 
 ```
 bundle
-bundle exec rerun ruby app.rb # rerun will hot-reload your code
+bundle exec rerun rackup # rerun will hot-reload your code
 ```
