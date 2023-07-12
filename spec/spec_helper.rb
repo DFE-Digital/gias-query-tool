@@ -1,10 +1,11 @@
+ENV['APP_ENV'] = 'test'
+
 require 'rack/test'
 require 'logger'
 require 'openapi3'
 require 'openapi3/valid_against_open_api_schema_matcher'
 
 require_relative '../app'
-GIASApi.environment = :test
 
 def app
   GIASApi
@@ -24,7 +25,7 @@ rescue ActiveRecord::NoDatabaseError
   str << '========================'
   str << ''
   str << 'You need to download the database before running rspec'
-  str << 'Run `make`.'
+  str << 'Run `make test_db`.'
 
   raise str.join("\n")
 end

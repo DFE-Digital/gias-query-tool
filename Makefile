@@ -129,3 +129,9 @@ load_to_bq: ${export_table_files} ${export_view_files} generate_schemas upload_t
 
 docs:
 	redocly build-docs config/gias_api_v1.yml --output=docs/api-docs.html
+
+tmp/test-edubase-data.csv: download_gias_data
+	head -n 101 tmp/${fixed_filename} > $@ # 100 schools plus header row
+
+test_db: tmp/test-edubase-data.csv
+	$(MAKE) database_name=gias_test fixed_filename=test-edubase-data.csv refresh
