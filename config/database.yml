@@ -6,4 +6,4 @@ development: &default
 
 test:
   <<: *default
-
+  database: gias_test
