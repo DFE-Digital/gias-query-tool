@@ -7,7 +7,7 @@ RSpec.describe 'GET /schools' do
     expect(last_response.status).to eq(200)
 
     resp = JSON.parse(last_response.body)
-    expect(resp['data'].length).to eq(10)
+    expect(resp['data'].length).to eq(100)
 
     expect(resp).to be_valid_against_openapi_schema('SchoolList')
   end
