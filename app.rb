@@ -6,11 +6,20 @@ $LOAD_PATH.unshift settings.root + '/lib'
 
 require 'openapi3'
 
-class School < ActiveRecord::Base
+module SerializableSchool
   def as_json
     attrs = super.except('urn', 'coordinates')
     {data: { id: urn, type: 'school', attributes: attrs }}
   end
+end
+
+
+class School < ActiveRecord::Base
+  include SerializableSchool
+end
+
+class OpenSchool < ActiveRecord::Base
+  include SerializableSchool
 end
 
 class GIASApi < Sinatra::Base
@@ -24,6 +33,10 @@ class GIASApi < Sinatra::Base
 
   get '/api/schools' do
     { data: School.all.as_json }.to_json
+  end
+
+  get '/api/open_schools' do
+    { data: OpenSchool.all.as_json }.to_json
   end
 
   get '/api/schools/:id' do
