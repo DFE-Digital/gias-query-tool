@@ -136,5 +136,7 @@ load_to_bq: ${export_table_files} ${export_view_files} generate_schemas upload_t
 		fi \
 	done
 
-docs:
-	redocly build-docs config/gias_api_v1.yml --output=docs/api-docs.html
+docs/api-docs.html: config/gias_api_v1.yml
+	redocly build-docs $^ --output=docs/api-docs.html
+
+docs: docs/api-docs.html

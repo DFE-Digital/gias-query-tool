@@ -17,6 +17,16 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/SchoolList"
+  /open_schools:
+    get:
+      summary: Get a list of open schools
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SchoolList"
   /schools/{school_id}:
     get:
       summary: Get a single school
