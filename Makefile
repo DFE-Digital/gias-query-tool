@@ -2,13 +2,14 @@ psql_command=psql -q
 today:=$(shell date "+%Y%m%d")
 gias_filename:=edubasealldata${today}.csv
 fixed_filename=edubasealldata${today}-fixed.csv
+test_filename=edubasealldata${today}-fixed-test-set.csv
 database_name=gias
 data_dir=tmp
 export_dir=tmp/export
 gcs_bucket=rugged-abacus-uploads
 bq_dataset=gias
 
-reload: download_gias_data refresh
+reload: ${data_dir}/${fixed_filename} refresh
 
 refresh: drop_database           \
 		 create_database         \
@@ -22,10 +23,18 @@ refresh: drop_database           \
 		 create_views            \
 		 refresh_views
 
-download_gias_data:
+${data_dir}/${gias_filename}:
 	rm -f tmp/*.csv
 	wget https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/${gias_filename} --directory-prefix=${data_dir}
-	iconv -f ISO8859-1 -t UTF-8 tmp/${gias_filename} > tmp/${fixed_filename}
+
+${data_dir}/${fixed_filename}: ${data_dir}/${gias_filename}
+	iconv -f ISO8859-1 -t UTF-8 $^ > $@
+
+${data_dir}/${test_filename}: ${data_dir}/${fixed_filename}
+	head -n 101 $^ > $@ # 100 schools plus header row
+
+test_db: ${data_dir}/${test_filename}
+	$(MAKE) database_name=gias_test fixed_filename=${test_filename} refresh
 
 drop_database:
 	dropdb --if-exists ${database_name}
@@ -130,9 +139,3 @@ load_to_bq: ${export_table_files} ${export_view_files} generate_schemas upload_t
 
 docs:
 	redocly build-docs config/gias_api_v1.yml --output=docs/api-docs.html
-
-tmp/test-edubase-data.csv: download_gias_data
-	head -n 101 tmp/${fixed_filename} > $@ # 100 schools plus header row
-
-test_db: tmp/test-edubase-data.csv
-	$(MAKE) database_name=gias_test fixed_filename=test-edubase-data.csv refresh
