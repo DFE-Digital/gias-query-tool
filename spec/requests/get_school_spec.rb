@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'json'
-
 RSpec.describe 'GET /schools/:id' do
   it 'returns a school' do
     get '/api/schools/100000'

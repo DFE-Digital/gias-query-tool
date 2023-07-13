@@ -9,5 +9,11 @@ Style/Documentation:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Metrics/MethodLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
 AllCops:
   NewCops: enable

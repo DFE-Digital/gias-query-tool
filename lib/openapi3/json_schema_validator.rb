@@ -23,7 +23,7 @@ module OpenAPI3
       ERROR
     end
 
-  private
+    private
 
     def formatted_validation_errors
       validator = JSON::Validator.fully_validate(schema, item)
