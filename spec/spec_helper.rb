@@ -1,6 +1,7 @@
 ENV['APP_ENV'] = 'test'
 
 require 'rack/test'
+require 'json'
 require 'logger'
 require 'openapi3'
 require 'openapi3/valid_against_open_api_schema_matcher'
@@ -19,15 +20,16 @@ ActiveRecord::Base.logger = logger
 begin
   School.first.name
 rescue ActiveRecord::NoDatabaseError
-  str = []
-  str << '========================'
-  str << 'Cannot initialise tests!'
-  str << '========================'
-  str << ''
-  str << 'You need to download the database before running rspec'
-  str << 'Run `make test_db`.'
+  error = <<~HEREDOC
+    ========================
+    Cannot initialise tests!
+    ========================
 
-  raise str.join("\n")
+    You need to download the database before running rspec
+    Run `make test_db`.
+  HEREDOC
+
+  raise error
 end
 
 module OpenAPISpecVerifier

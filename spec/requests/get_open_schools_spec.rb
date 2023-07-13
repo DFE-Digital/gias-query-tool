@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'json'
-
 RSpec.describe 'GET /open_schools' do
   it 'returns a list of open schools' do
     expect(OpenSchool.count).to be > 0

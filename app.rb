@@ -2,17 +2,16 @@ require 'sinatra'
 require 'active_support'
 require 'sinatra/activerecord'
 
-$LOAD_PATH.unshift settings.root + '/lib'
+$LOAD_PATH.unshift "#{settings.root}/lib"
 
 require 'openapi3'
 
 module SerializableSchool
   def as_json
     attrs = super.except('urn', 'coordinates')
-    {data: { id: urn, type: 'school', attributes: attrs }}
+    { data: { id: urn, type: 'school', attributes: attrs } }
   end
 end
-
 
 class School < ActiveRecord::Base
   include SerializableSchool

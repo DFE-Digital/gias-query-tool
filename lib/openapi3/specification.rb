@@ -21,7 +21,7 @@ module OpenAPI3
       spec
     end
 
-  private
+    private
 
     def transform_openapi_schema_to_json_schema(schema)
       new_props = {}
@@ -30,8 +30,8 @@ module OpenAPI3
         new_props[prop] = {
           'oneOf' => [
             value.except('nullable'),
-            { 'type' => 'null' },
-          ],
+            { 'type' => 'null' }
+          ]
         }
       end
 

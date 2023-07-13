@@ -16,14 +16,14 @@ module OpenAPI3
       validator(@target).failure_message
     end
 
-  private
+    private
 
     def validator(target)
       spec = OpenAPI3::Specification.new(@spec)
 
       JSONSchemaValidator.new(
         spec.as_json_schema(@schema_name),
-        target,
+        target
       )
     end
   end

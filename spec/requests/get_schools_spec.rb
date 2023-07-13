@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'json'
-
 RSpec.describe 'GET /schools' do
   it 'returns a list of schools' do
     get '/api/schools'
