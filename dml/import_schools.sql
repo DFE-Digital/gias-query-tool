@@ -28,6 +28,7 @@ insert into schools (
 	ofsted_rating,
 	phase,
 	local_authority,
+	government_office_region,
 	free_school_meals_percentage,
 	start_age,
 	finish_age,
@@ -120,6 +121,16 @@ select
 	nullif(sr."OfstedRating (name)", '')::ofsted_rating,
 	nullif(sr."PhaseOfEducation (name)", '')::phase,
 	sr."LA (name)",
+	case -- government_office_region
+	when sr."GOR (name)" = 'Not Applicable'
+		then null
+	when sr."GOR (name)" = 'Wales (pseudo)'
+		then 'Wales'::government_office_region
+	when sr."GOR (name)" = 'Yorkshire and the Humber'
+		then 'Yorkshire and The Humber'::government_office_region
+	else
+		sr."GOR (name)"::government_office_region
+	end,
 	nullif(sr."PercentageFSM", '')::decimal,
 	nullif(sr."StatutoryLowAge", '')::integer,
 	nullif(sr."StatutoryHighAge", '')::integer,
