@@ -50,6 +50,7 @@ create_types:
 	${psql_command} ${database_name} < ddl/types/ofsted_rating.sql
 	${psql_command} ${database_name} < ddl/types/phase.sql
 	${psql_command} ${database_name} < ddl/types/rural_urban_classification.sql
+	${psql_command} ${database_name} < ddl/types/government_office_regions.sql
 
 create_data_tables:
 	${psql_command} ${database_name} < ddl/tables/create_schools.sql

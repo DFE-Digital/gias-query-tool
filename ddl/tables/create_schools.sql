@@ -16,6 +16,7 @@ create table schools (
 	girls integer,
 	gender gender,
 	coordinates geography(point),
+	government_office_region government_office_region,
 	ofsted_rating ofsted_rating,
 	phase phase,
 	free_school_meals_percentage numeric,
