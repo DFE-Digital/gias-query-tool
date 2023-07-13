@@ -40,7 +40,12 @@ insert into schools (
 
 select
 	sr."URN"::integer,
-	sr."UKPRN"::integer,
+	case --ukprn
+	when (sr."UKPRN" is null or sr."UKPRN" = '')
+		then null
+	else
+		sr."UKPRN"::integer
+	end,
 	sr."EstablishmentName",
 	sr."TypeOfEstablishment (name)"::establishment,
 	sr."EstablishmentTypeGroup (name)"::establishment_group,
