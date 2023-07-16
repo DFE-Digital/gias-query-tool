@@ -1,9 +1,13 @@
-psql_command=psql -q
 today:=$(shell date "+%Y%m%d")
 gias_filename:=edubasealldata${today}.csv
 fixed_filename=edubasealldata${today}-fixed.csv
 test_filename=edubasealldata${today}-fixed-test-set.csv
 database_name=gias
+pg_host=localhost
+pg_port=5432
+pg_username=${USER}
+psql_connection_string=postgres://${pg_username}@${pg_host}:${pg_port}/${database_name}
+psql_command=psql -q -d ${psql_connection_string}
 data_dir=tmp
 export_dir=tmp/export
 gcs_bucket=rugged-abacus-uploads
@@ -37,61 +41,61 @@ test_db: ${data_dir}/${test_filename}
 	$(MAKE) database_name=gias_test fixed_filename=${test_filename} refresh
 
 drop_database:
-	dropdb --if-exists ${database_name}
+	dropdb -h ${pg_host} -U ${pg_username} ${database_name}
 
 create_database:
-	createdb ${database_name}
+	createdb -h ${pg_host} -U ${pg_username} ${database_name}
 
 create_postgis:
-	${psql_command} ${database_name} < ddl/extensions/postgis.sql
+	${psql_command} < ddl/extensions/postgis.sql
 
 create_holding_tables:
-	${psql_command} ${database_name} < ddl/tables/create_schools_raw.sql
-	${psql_command} ${database_name} < ddl/tables/create_email_addresses_raw.sql
-	${psql_command} ${database_name} < ddl/tables/create_deprivation_pupil_premium_raw.sql
-	${psql_command} ${database_name} < ddl/tables/geo/create_electoral_regions_raw.sql
-	${psql_command} ${database_name} < ddl/tables/geo/create_local_authority_districts_raw.sql
+	${psql_command} < ddl/tables/create_schools_raw.sql
+	${psql_command} < ddl/tables/create_email_addresses_raw.sql
+	${psql_command} < ddl/tables/create_deprivation_pupil_premium_raw.sql
+	${psql_command} < ddl/tables/geo/create_electoral_regions_raw.sql
+	${psql_command} < ddl/tables/geo/create_local_authority_districts_raw.sql
 
 create_types:
-	${psql_command} ${database_name} < ddl/types/establishment.sql
-	${psql_command} ${database_name} < ddl/types/establishment_group.sql
-	${psql_command} ${database_name} < ddl/types/gender.sql
-	${psql_command} ${database_name} < ddl/types/ofsted_rating.sql
-	${psql_command} ${database_name} < ddl/types/phase.sql
-	${psql_command} ${database_name} < ddl/types/rural_urban_classification.sql
-	${psql_command} ${database_name} < ddl/types/government_office_regions.sql
+	${psql_command} < ddl/types/establishment.sql
+	${psql_command} < ddl/types/establishment_group.sql
+	${psql_command} < ddl/types/gender.sql
+	${psql_command} < ddl/types/ofsted_rating.sql
+	${psql_command} < ddl/types/phase.sql
+	${psql_command} < ddl/types/rural_urban_classification.sql
+	${psql_command} < ddl/types/government_office_regions.sql
 
 create_data_tables:
-	${psql_command} ${database_name} < ddl/tables/create_schools.sql
-	${psql_command} ${database_name} < ddl/tables/create_deprivation_pupil_premium.sql
-	${psql_command} ${database_name} < ddl/tables/geo/create_regions.sql
-	${psql_command} ${database_name} < ddl/tables/geo/create_local_authorities.sql
+	${psql_command} < ddl/tables/create_schools.sql
+	${psql_command} < ddl/tables/create_deprivation_pupil_premium.sql
+	${psql_command} < ddl/tables/geo/create_regions.sql
+	${psql_command} < ddl/tables/geo/create_local_authorities.sql
 
 create_views:
-	${psql_command} ${database_name} < ddl/views/open_schools.sql
+	${psql_command} < ddl/views/open_schools.sql
 
 populate_holding_tables:
-	${psql_command} ${database_name} --command "\copy schools_raw from 'tmp/${fixed_filename}' with csv header"
-	${psql_command} ${database_name} < dml/import_email_addresses_raw.sql
-	${psql_command} ${database_name} < dml/import_deprivation_pupil_premium_raw.sql
-	${psql_command} ${database_name} < dml/geo/import_electoral_regions.sql
-	${psql_command} ${database_name} < dml/geo/import_local_authority_districts.sql
+	${psql_command} --command "\copy schools_raw from 'tmp/${fixed_filename}' with csv header"
+	${psql_command} < dml/import_email_addresses_raw.sql
+	${psql_command} < dml/import_deprivation_pupil_premium_raw.sql
+	${psql_command} < dml/geo/import_electoral_regions.sql
+	${psql_command} < dml/geo/import_local_authority_districts.sql
 
 drop_holding_tables:
-	${psql_command} ${database_name} < ddl/tables/drop_schools_raw.sql
-	${psql_command} ${database_name} < ddl/tables/drop_email_addresses_raw.sql
-	${psql_command} ${database_name} < ddl/tables/drop_deprivation_pupil_premium_raw.sql
-	${psql_command} ${database_name} < ddl/tables/geo/drop_electoral_regions_raw.sql
-	${psql_command} ${database_name} < ddl/tables/geo/drop_local_authority_districts_raw.sql
+	${psql_command} < ddl/tables/drop_schools_raw.sql
+	${psql_command} < ddl/tables/drop_email_addresses_raw.sql
+	${psql_command} < ddl/tables/drop_deprivation_pupil_premium_raw.sql
+	${psql_command} < ddl/tables/geo/drop_electoral_regions_raw.sql
+	${psql_command} < ddl/tables/geo/drop_local_authority_districts_raw.sql
 
 populate_data_tables:
-	${psql_command} ${database_name} < dml/import_schools.sql
-	${psql_command} ${database_name} < dml/import_deprivation_pupil_premium.sql
-	${psql_command} ${database_name} < dml/geo/import_regions.sql
-	${psql_command} ${database_name} < dml/geo/import_districts.sql
+	${psql_command} < dml/import_schools.sql
+	${psql_command} < dml/import_deprivation_pupil_premium.sql
+	${psql_command} < dml/geo/import_regions.sql
+	${psql_command} < dml/geo/import_districts.sql
 
 refresh_views:
-	${psql_command} ${database_name} < ddl/refresh/refresh_open_schools.sql
+	${psql_command} < ddl/refresh/refresh_open_schools.sql
 
 export_views := $(shell psql ${database_name} -XtAc "SELECT matviewname FROM pg_catalog.pg_matviews WHERE schemaname NOT LIKE 'pg_%';")
 export_tables := $(shell psql ${database_name} -XtAc "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname='public' AND tablename NOT IN ('local_authorities', 'regions');")

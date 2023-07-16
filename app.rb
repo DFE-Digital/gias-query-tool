@@ -31,6 +31,10 @@ class GIASApi < Sinatra::Base
     send_file './docs/api-docs.html'
   end
 
+  get '/version' do
+    ENV.fetch('SHA', nil)
+  end
+
   get '/api/schools' do
     { data: School.all.as_json }.to_json
   end

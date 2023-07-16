@@ -28,7 +28,7 @@ COPY . .
 FROM ${BASE_RUBY_IMAGE} AS production
 
 RUN apk -U upgrade && \
-    apk add --update --no-cache make postgresql-dev
+    apk add --update --no-cache make postgresql-dev postgresql-client
 
 WORKDIR /app
 
