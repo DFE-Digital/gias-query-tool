@@ -1,0 +1,9 @@
+---
+development: &default
+  adapter: postgresql
+  encoding: unicode
+  database: gias
+
+test:
+  <<: *default
+  database: gias_test

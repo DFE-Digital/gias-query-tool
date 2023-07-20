@@ -1,1 +1,3 @@
 tmp/*
+spec/examples.txt
+test.log
