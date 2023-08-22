@@ -50,4 +50,8 @@ class GIASApi < Sinatra::Base
   rescue ActiveRecord::RecordNotFound
     halt(404)
   end
+
+  get '/healthcheck' do
+    ''
+  end
 end
