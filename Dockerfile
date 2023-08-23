@@ -6,7 +6,7 @@ FROM ${BASE_RUBY_IMAGE} AS gems
 # Update and install build dependencies
 RUN apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get install -y build-essential && \
+    apt-get install -y build-essential libpq-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -14,11 +14,13 @@ WORKDIR /app
 
 COPY Gemfile Gemfile.lock .
 
+ENV BUNDLER_WITHOUT="development test"
+
 RUN gem update --system && \
     bundler -v && \
     bundle config set no-cache 'true' && \
     bundle config set no-binstubs 'true' && \
-    bundle --retry=5 --jobs=4 --without=development && \
+    bundle --retry=5 --jobs=4 && \
     rm -rf /usr/local/bundle/cache
 
 FROM ${BASE_RUBY_IMAGE} AS production

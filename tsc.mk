@@ -5,6 +5,8 @@ REGION=UK South
 SERVICE_NAME=gias-api
 SERVICE_SHORT=gias
 DOCKER_REPOSITORY=ghcr.io/dfe-digital/gias-api
+CURRENT_SHA:=$(shell git rev-parse HEAD)
+DOCKER_IMAGE:=$(DOCKER_REPOSITORY)$(CURRENT_SHA)
 
 .PHONY: development
 development: test-cluster

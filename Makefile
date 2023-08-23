@@ -8,15 +8,23 @@ pg_port=5432
 pg_username=${USER}
 psql_connection_string=postgres://${pg_username}@${pg_host}:${pg_port}/${database_name}
 psql_command=psql -q -d ${psql_connection_string}
+psql_base_url=$(shell echo $(psql_connection_string) | sed 's/\/[^\/]*$$//')
 data_dir=tmp
 export_dir=tmp/export
 gcs_bucket=rugged-abacus-uploads
 bq_dataset=gias
 current_git_sha:=$(shell git rev-parse HEAD)
 
-build_docker_container: api_db
+build_docker: api_db
 	# linux/amd64 as this is required for Teacher Services Cloud
 	docker build --platform=linux/amd64 -t "ghcr.io/dfe-digital/gias-api:${current_git_sha}" .
+
+push_docker:
+	docker push ghcr.io/dfe-digital/gias-api:${current_git_sha}
+
+deploy:
+	# this is a temporary task while we get set up
+	AUTO_APPROVE=-auto-approve DOCKER_IMAGE_TAG=${current_git_sha} make -f tsc.mk development terraform-apply
 
 reload: ${data_dir}/${fixed_filename} refresh
 
@@ -50,10 +58,10 @@ test_db: ${data_dir}/${test_filename}
 	$(MAKE) database_name=gias_test db/gias_test.sqlite3
 
 drop_database:
-	dropdb -h ${pg_host} -U ${pg_username} ${database_name}
+	-psql ${psql_base_url} -qc "DROP DATABASE ${database_name};"
 
 create_database:
-	createdb -h ${pg_host} -U ${pg_username} ${database_name}
+	psql ${psql_base_url} -qc "CREATE DATABASE ${database_name};"
 
 create_postgis:
 	${psql_command} < ddl/extensions/postgis.sql

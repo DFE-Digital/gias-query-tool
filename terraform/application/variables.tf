@@ -27,14 +27,6 @@ variable "deploy_azure_backing_services" {
   default     = true
   description = "Deploy real Azure backing services like databases, as opposed to containers inside of AKS"
 }
-variable "enable_postgres_ssl" {
-  default     = true
-  description = "Enforce SSL connection from the client side"
-}
-variable "enable_postgres_backup_storage" {
-  default     = false
-  description = "Create a storage account to store database dumps"
-}
 variable "docker_image" {
   description = "Docker image full name to identify it in the registry. Includes docker registry, repository and tag e.g.: ghcr.io/dfe-digital/teacher-pay-calculator:673f6309fd0c907014f44d6732496ecd92a2bcd0"
 }
@@ -42,17 +34,7 @@ variable "external_url" {
   default     = null
   description = "Healthcheck URL for StatusCake monitoring"
 }
-variable "statuscake_contact_groups" {
-  default     = []
-  description = "ID of the contact group in statuscake web UI"
-}
-variable "enable_monitoring" {
-  default     = false
-  description = "Enable monitoring and alerting"
-}
 
 locals {
   azure_credentials = try(jsondecode(var.azure_credentials_json), null)
-
-  postgres_ssl_mode = var.enable_postgres_ssl ? "require" : "disable"
 }

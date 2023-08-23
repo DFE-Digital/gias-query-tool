@@ -8,15 +8,9 @@ module "application_configuration" {
   config_short           = var.config_short
   secret_key_vault_short = "app"
 
-  # Delete for non rails apps
-  is_rails_application = true
-
   config_variables = {
     ENVIRONMENT_NAME = var.environment
-    PGSSLMODE        = local.postgres_ssl_mode
-  }
-  secret_variables = {
-    DATABASE_URL = module.postgres.url
+    RACK_ENV         = "production"
   }
 }
 
