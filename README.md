@@ -304,11 +304,18 @@ This app bundles a JSON API written in Ruby.
 To work on the API:
 
 ```
-make api_db # move data to SQLite to power the app
 bundle
+make api_db # move data to SQLite to power the app
 bundle exec rerun rackup # rerun will hot-reload your code
 ```
 
+### Deployment
+
+Work in progress. Deployment is now manual from a dev machine, and we only deploy to the Teacher Services Cloud test environment. First log into Azure and obtain a PIM for the TS test subscription, then run the following command:
+
+```
+make build_docker push_docker deploy
+```
 
 ### API documentation
 
