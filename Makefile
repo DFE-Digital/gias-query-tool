@@ -12,6 +12,11 @@ data_dir=tmp
 export_dir=tmp/export
 gcs_bucket=rugged-abacus-uploads
 bq_dataset=gias
+current_git_sha:=$(shell git rev-parse HEAD)
+
+build_docker_container: api_db
+	# linux/amd64 as this is required for Teacher Services Cloud
+	docker build --platform=linux/amd64 -t "ghcr.io/dfe-digital/gias-api:${current_git_sha}" .
 
 reload: ${data_dir}/${fixed_filename} refresh
 
