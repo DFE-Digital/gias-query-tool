@@ -24,9 +24,34 @@ jobs:
       IMAGE_TAG: ${{ env.IMAGE_TAG }}
       GIT_BRANCH: ${{ env.GIT_BRANCH }}
 
+    services:
+      postgres:
+        image: postgis/postgis
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@ec02537da5712d66d4d50a0f33b7eb52773b5ed1
+        with:
+          ruby-version: '3.1'
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Prepare SQLite database
+        run: make api_db pg_username="postgres:postgres"
 
       - name: Set docker image tag (push)
         if: github.event_name == 'push'
@@ -56,6 +81,7 @@ jobs:
       - name: Build Docker Image
         uses: docker/build-push-action@v4
         with:
+          context: .
           tags: |
             ${{ env.DOCKER_IMAGE }}:${{ env.IMAGE_TAG }}
             ${{ env.DOCKER_IMAGE }}:${{ env.GIT_BRANCH }}
