@@ -86,6 +86,7 @@ GEM
       rubocop-factory_bot (~> 2.22)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    sequel (5.71.0)
     sinatra (3.0.6)
       mustermann (~> 3.0)
       rack (~> 2.2, >= 2.2.4)
@@ -94,6 +95,7 @@ GEM
     sinatra-activerecord (2.0.26)
       activerecord (>= 4.1)
       sinatra (>= 1.0)
+    sqlite3 (1.6.3-arm64-darwin)
     tilt (2.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -112,8 +114,10 @@ DEPENDENCIES
   rspec
   rubocop
   rubocop-rspec
+  sequel
   sinatra
   sinatra-activerecord
+  sqlite3
 
 BUNDLED WITH
    2.3.22

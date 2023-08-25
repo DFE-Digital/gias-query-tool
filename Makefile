@@ -37,8 +37,12 @@ ${data_dir}/${fixed_filename}: ${data_dir}/${gias_filename}
 ${data_dir}/${test_filename}: ${data_dir}/${fixed_filename}
 	head -n 101 $^ > $@ # 100 schools plus header row
 
+.PHONY: api_db
+api_db: refresh db/gias.sqlite3 db/gias_test.sqlite3
+
 test_db: ${data_dir}/${test_filename}
 	$(MAKE) database_name=gias_test fixed_filename=${test_filename} refresh
+	$(MAKE) database_name=gias_test db/gias_test.sqlite3
 
 drop_database:
 	dropdb -h ${pg_host} -U ${pg_username} ${database_name}
@@ -96,6 +100,11 @@ populate_data_tables:
 
 refresh_views:
 	${psql_command} < ddl/refresh/refresh_open_schools.sql
+
+db/%.sqlite3:
+	rm db/*.sqlite
+	bundle exec sequel -C ${psql_connection_string} sqlite://$@
+	sqlite3 $@ 'CREATE VIEW open_schools AS SELECT * FROM schools WHERE open'
 
 export_views := $(shell psql ${database_name} -XtAc "SELECT matviewname FROM pg_catalog.pg_matviews WHERE schemaname NOT LIKE 'pg_%';")
 export_tables := $(shell psql ${database_name} -XtAc "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname='public' AND tablename NOT IN ('local_authorities', 'regions');")

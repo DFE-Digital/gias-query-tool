@@ -304,9 +304,11 @@ This app bundles a JSON API written in Ruby.
 To work on the API:
 
 ```
+make api_db # move data to SQLite to power the app
 bundle
 bundle exec rerun rackup # rerun will hot-reload your code
 ```
+
 
 ### API documentation
 

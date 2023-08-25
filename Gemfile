@@ -6,8 +6,10 @@ gem 'activesupport'
 gem 'rubocop'
 gem 'rubocop-rspec', require: false
 
-gem 'pg'
+gem 'pg', require: false
+gem 'sqlite3'
 gem 'sinatra-activerecord'
+gem 'sequel'
 
 group :development do
   gem 'rerun'
@@ -21,3 +23,4 @@ group :test do
   gem 'rack-test'
   gem 'json-schema'
 end
+
