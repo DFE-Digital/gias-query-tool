@@ -38,7 +38,8 @@ RUN echo "Europe/London" > /etc/timezone && \
     cp /usr/share/zoneinfo/Europe/London /etc/localtime
 
 ENV LANG=en_GB.UTF-8 \
-    APP_ENV=production
+    APP_ENV=production \
+    RACK_ENV=production
 
 WORKDIR /app
 
@@ -49,6 +50,5 @@ COPY . .
 
 ARG SHA
 ENV SHA=${SHA}
-ENV RACK_ENV=production
 
 CMD bundle exec rackup -p3000 --host 0.0.0.0

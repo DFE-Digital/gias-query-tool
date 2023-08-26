@@ -51,7 +51,7 @@ ${data_dir}/${test_filename}: ${data_dir}/${fixed_filename}
 	head -n 101 $^ > $@ # 100 schools plus header row
 
 .PHONY: api_db
-api_db: reload db/gias.sqlite3 db/gias_test.sqlite3
+api_db: reload db/gias.sqlite3 test_db
 
 test_db: ${data_dir}/${test_filename}
 	$(MAKE) database_name=gias_test fixed_filename=${test_filename} refresh
