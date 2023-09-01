@@ -1,4 +1,4 @@
-name: Build
+name: Build and deploy
 
 on:
   push:
@@ -119,3 +119,29 @@ jobs:
     steps:
       - name: Run tests
         run: bundle exec rspec
+
+  deploy:
+    name: Deploy
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Load terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.5.1
+          terraform_wrapper: false
+
+      - name: Set Azure credentials
+        uses: DFE-Digital/github-actions/set-arm-environment-variables@master
+        with:
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform apply
+        run: make -f tsc.mk ci development terraform-apply
+        env:
+          DOCKER_IMAGE_TAG: ${{ needs.build.outputs.IMAGE_TAG }}
