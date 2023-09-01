@@ -58,7 +58,6 @@ components:
         id:
           type: integer
           description: the Unique Reference Number (URN) for this school
-          format: int64
           example: 100000
         type:
           type: string
@@ -69,9 +68,9 @@ components:
       type: object
       properties:
         ukprn:
-          type: 'string'
+          type: 'integer'
           nullable: true
-          example: '12345678'
+          example: 12345678
           description: 'UK Provider Reference Number, for learning providers'
         name:
           type: 'string'
@@ -138,15 +137,15 @@ components:
         opened_on:
           nullable: true
           type: string
-          format: date-time
+          format: date
         closed_on:
           nullable: true
           type: string
-          format: date-time
+          format: date
         censused_on:
           nullable: true
           type: string
-          format: date-time
+          format: date
         pupils:
           nullable: true
           type: integer
@@ -178,16 +177,17 @@ components:
             - 'Special Measures'
             - 'Insufficient evidence'
         phase:
-          nullable: true
           type: string
+          nullable: true
           enum:
-            - 'Outstanding'
-            - 'Good'
-            - 'Requires improvement'
-            - 'Serious Weaknesses'
-            - 'Inadequate'
-            - 'Special Measures'
-            - 'Insufficient evidence'
+            - '16 plus'
+            - 'All-through'
+            - 'Middle deemed primary'
+            - 'Middle deemed secondary'
+            - 'Not applicable'
+            - 'Nursery'
+            - 'Primary'
+            - 'Secondary'
         free_school_meals_percentage:
           nullable: true
           type: number
