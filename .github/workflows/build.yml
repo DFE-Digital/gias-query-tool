@@ -1,4 +1,4 @@
-name: Build
+name: Build and deploy
 
 on:
   push:
@@ -24,9 +24,34 @@ jobs:
       IMAGE_TAG: ${{ env.IMAGE_TAG }}
       GIT_BRANCH: ${{ env.GIT_BRANCH }}
 
+    services:
+      postgres:
+        image: postgis/postgis
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@ec02537da5712d66d4d50a0f33b7eb52773b5ed1
+        with:
+          ruby-version: '3.1'
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Prepare SQLite database
+        run: make api_db pg_username="postgres:postgres"
 
       - name: Set docker image tag (push)
         if: github.event_name == 'push'
@@ -56,6 +81,7 @@ jobs:
       - name: Build Docker Image
         uses: docker/build-push-action@v4
         with:
+          context: .
           tags: |
             ${{ env.DOCKER_IMAGE }}:${{ env.IMAGE_TAG }}
             ${{ env.DOCKER_IMAGE }}:${{ env.GIT_BRANCH }}
@@ -76,31 +102,46 @@ jobs:
     name: Tests
     needs: [build]
     runs-on: ubuntu-latest
+
     container:
       image: ghcr.io/dfe-digital/gias-api:${{ needs.build.outputs.IMAGE_TAG }}
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
       env:
+        RACK_ENV: test
         APP_ENV: test
-        DATABASE_URL: postgres://postgres:postgres@postgres:5432
-        PGPASSWORD: postgres # necessary for psql, which can't accept this as a cli argument
-    services:
-      postgres:
-        image: postgis/postgis:15-3.3
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: gias_test
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     defaults:
       run:
         working-directory: /app
-    steps:
-      - name: Setup database
-        run: make pg_host=postgres pg_username=postgres test_db
 
+    steps:
       - name: Run tests
         run: bundle exec rspec
+
+  deploy:
+    name: Deploy
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Load terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.5.1
+          terraform_wrapper: false
+
+      - name: Set Azure credentials
+        uses: DFE-Digital/github-actions/set-arm-environment-variables@master
+        with:
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform apply
+        run: make -f tsc.mk ci development terraform-apply
+        env:
+          DOCKER_IMAGE_TAG: ${{ needs.build.outputs.IMAGE_TAG }}

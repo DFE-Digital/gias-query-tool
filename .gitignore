@@ -1,3 +1,14 @@
-tmp/*
+tmp/
+db/*.sqlite3
+*.log
+
+# Testing
 spec/examples.txt
 test.log
+
+# Terraform
+.terraform
+terraform/application/vendor
+terraform/domains/environment_domains/vendor
+terraform.tfstate*
+bin/terrafile

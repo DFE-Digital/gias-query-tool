@@ -1,9 +1,12 @@
 ---
 development: &default
-  adapter: postgresql
+  adapter: sqlite3
   encoding: unicode
-  database: gias
+  database: db/gias.sqlite3
 
 test:
   <<: *default
-  database: gias_test
+  database: db/gias_test.sqlite3
+
+production:
+  <<: *default

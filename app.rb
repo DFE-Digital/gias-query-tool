@@ -9,10 +9,10 @@ require 'openapi3'
 module SerializableSchool
   def as_json
     attrs = super.except('urn', 'coordinates')
-    {data: { id: urn, type: 'school', attributes: attrs }}
+    attrs['free_school_meals_percentage'] = attrs['free_school_meals_percentage'].to_f
+    { id: urn.to_i, type: 'school', attributes: attrs }
   end
 end
-
 
 class School < ActiveRecord::Base
   include SerializableSchool
@@ -49,5 +49,9 @@ class GIASApi < Sinatra::Base
     { data: school.as_json }.to_json
   rescue ActiveRecord::RecordNotFound
     halt(404)
+  end
+
+  get '/healthcheck' do
+    ''
   end
 end
