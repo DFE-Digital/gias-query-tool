@@ -123,6 +123,7 @@ jobs:
   deploy:
     name: Deploy
     needs: [build, test]
+    if: ${{ success() && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     environment: development
 
