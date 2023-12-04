@@ -123,11 +123,19 @@ jobs:
         run: bundle exec rspec
 
   deploy:
-    name: Deploy
+    name: Deploy ${{ matrix.environment }}
     needs: [build, test]
-    if: ${{ success() && github.ref == 'refs/heads/master' }}
+    # if: ${{ success() && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{ matrix.environment }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - environment: development
+            hostname: gias-api-development.test.teacherservices.cloud
+          - environment: production
+            hostname: FAIL
 
     steps:
       - name: Checkout code
@@ -148,3 +156,6 @@ jobs:
         run: make -f tsc.mk ci development terraform-apply
         env:
           DOCKER_IMAGE_TAG: ${{ needs.build.outputs.IMAGE_TAG }}
+
+      - name: Smoke test
+        run: curl -s https://${{ matrix.hostname }}/api/schools/100000 | grep -q "The Aldgate School"
