@@ -61,6 +61,7 @@ drop_database:
 	-psql ${psql_base_url} -qc "DROP DATABASE ${database_name};"
 
 create_database:
+	@echo creating database ${psql_base_url}
 	psql ${psql_base_url} -qc "CREATE DATABASE ${database_name};"
 
 create_postgis:

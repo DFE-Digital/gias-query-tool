@@ -1,4 +1,5 @@
 name: Build and deploy
+concurrency: workflow-Build-and-deploy-${{ github.ref }}
 
 on:
   push:
@@ -51,7 +52,7 @@ jobs:
         run: bundle install
 
       - name: Prepare SQLite database
-        run: make api_db pg_username="postgres:postgres"
+        run: make api_db pg_username="postgres:postgres" pg_host="localhost"
 
       - name: Set docker image tag (push)
         if: github.event_name == 'push'
