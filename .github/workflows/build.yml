@@ -58,7 +58,9 @@ jobs:
         run: |
           GIT_REF=${{ github.ref }}
           echo "GIT_BRANCH=${GIT_REF##*/}" >> $GITHUB_ENV # GIT_BRANCH will be main for refs/heads/main
-          echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+          # add date as we will want to rebuild the same SHA with different daily data, and image tags
+          # must be distinct for them to require deployment
+          echo "IMAGE_TAG=${{ github.sha }}-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
       - name: Set docker image tag (pull_request)
         if: github.event_name == 'pull_request'
