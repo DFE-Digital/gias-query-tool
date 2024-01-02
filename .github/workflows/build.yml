@@ -117,6 +117,9 @@ jobs:
         working-directory: /app
 
     steps:
+      - name: Initialise test db
+        run: make test_db
+
       - name: Run tests
         run: bundle exec rspec
 
