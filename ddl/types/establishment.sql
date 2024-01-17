@@ -6,6 +6,7 @@ create type establishment as enum (
 	'Academy alternative provision converter',
 	'Academy alternative provision sponsor led',
 	'Academy converter',
+	'Academy secure 16 to 19',
 	'Academy special converter',
 	'Academy special sponsor led',
 	'Academy sponsor led',
