@@ -36,7 +36,8 @@ insert into schools (
 	rural_urban_classification,
 	email_address,
 	trust_code,
-	trust_name
+	trust_name,
+	headteacher_name
 )
 
 select
@@ -151,7 +152,9 @@ select
 	)::rural_urban_classification,
 	nullif(ear."MailEmail", ''),
 	nullif(sr."Trusts (code)", '')::integer,
-	nullif(sr."Trusts (name)", '')
+	nullif(sr."Trusts (name)", ''),
+
+	nullif(sr."HeadFirstName" || ' ' || sr."HeadLastName", '')
 
 from
 	schools_raw sr

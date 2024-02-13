@@ -26,5 +26,6 @@ create table schools (
 	rural_urban_classification rural_urban_classification,
 	email_address varchar(64),
 	trust_code integer,
-	trust_name varchar(128)
+	trust_name varchar(128),
+	headteacher_name varchar(128)
 );
