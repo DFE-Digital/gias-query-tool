@@ -132,7 +132,6 @@ CREATE TABLE "schools_raw" (
 	"PreviousLA (name)" VARCHAR,
 	"PreviousEstablishmentNumber" VARCHAR,
 	"OfstedRating (name)" VARCHAR,
-	"RSCRegion (name)" VARCHAR,
 	"Country (name)" VARCHAR,
 	"UPRN" VARCHAR,
 	"SiteName" VARCHAR,
