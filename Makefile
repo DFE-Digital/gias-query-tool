@@ -44,7 +44,6 @@ create_types:
 	${psql_command} ${database_name} < ddl/types/establishment.sql
 	${psql_command} ${database_name} < ddl/types/establishment_group.sql
 	${psql_command} ${database_name} < ddl/types/gender.sql
-	${psql_command} ${database_name} < ddl/types/ofsted_rating.sql
 	${psql_command} ${database_name} < ddl/types/phase.sql
 	${psql_command} ${database_name} < ddl/types/rural_urban_classification.sql
 	${psql_command} ${database_name} < ddl/types/government_office_regions.sql

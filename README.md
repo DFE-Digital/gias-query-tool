@@ -85,7 +85,6 @@ The importer creates the following database objects:
 | `establishment`              | `type`              | School types (eg. Foundation school, Free school)                  |
 | `establishment_group`        | `type`              | School categories (eg. Independent Schools, Universities, Colleges |
 | `gender`                     | `type`              | School gender policies (eg. Boys, Girls, Mixed)                    |
-| `ofsted_rating`              | `type`              | All Ofsted ratings, including deprecated ones                      |
 | `phase`                      | `type`              | School phases (eg. Secondary, Primary, 16 plus)                    |
 | `rural_urban_classification` | `type`              | Classification of a school's setting, source links in definition   |
 
@@ -129,40 +128,9 @@ Shapefile), you can use [GDAL](https://gdal.org/)'s
 | Word                                                         | Definition                                                                                                                                                     |
 | --------------                                               | ----------                                                                                                                                                     |
 | EduBase                                                      | The old name for [Get information about schools](https://get-information-schools.service.gov.uk/) (GIAS)                                                       |
-| [Ofsted](https://www.gov.uk/government/organisations/ofsted) | The Office for Standards in Education, Children's Services and Skills (Ofsted) is a non-ministerial department of the UK government, reporting to Parliament.A |
 | [URN](https://en.wikipedia.org/wiki/Unique_Reference_Number) | A six-digit number used by the UK government to identify educational establishments in the United Kingdom.                                                     |
 
 ## Example queries
-
-### "What's the breakdown of school genders by Ofsted rating?" 😕
-
-```sql
-select
-  os.ofsted_rating as "Ofsted rating",
-  os.gender,
-  count(*)
-from
-  open_schools os
-group by
-  os.ofsted_rating,
-  os.gender
-order by
-  os.ofsted_rating,
-  os.gender
-\crosstabview
-
-┌──────────────────────┬──────┬───────┬───────┬────────┬────────────────┐
-│    Ofsted rating     │ Boys │ Girls │ Mixed │ (null) │ Not applicable │
-╞══════════════════════╪══════╪═══════╪═══════╪════════╪════════════════╡
-│ Outstanding          │   58 │    95 │  3343 │      1 │                │
-│ Good                 │  139 │   107 │ 13844 │      1 │                │
-│ Requires improvement │   37 │    19 │  2017 │        │                │
-│ Inadequate           │   20 │    13 │    70 │        │                │
-│ Serious Weaknesses   │    2 │     1 │    97 │        │                │
-│ Special Measures     │    7 │     1 │   165 │        │                │
-│ (null)               │  166 │   225 │  4886 │    256 │           1345 │
-└──────────────────────┴──────┴───────┴───────┴────────┴────────────────┘
-```
 
 ### "Find all the schools within 3km of [Stonehenge](https://en.wikipedia.org/wiki/Stonehenge)" 🤔
 
