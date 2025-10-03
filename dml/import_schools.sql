@@ -140,11 +140,15 @@ select
 	upper(
 		replace(
 			replace(
-				nullif(sr."UrbanRural (name)", ''),
-				'(England/Wales) ',
+				replace(
+					nullif(sr."UrbanRural (name)", ''),
+					'(England/Wales) ',
+					''
+				),
+				'(Scotland) ',
 				''
 			),
-			'(Scotland) ',
+			'(pseudo) ',
 			''
 		)
 	)::rural_urban_classification,
