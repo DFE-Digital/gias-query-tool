@@ -5,6 +5,7 @@ create table schools (
 	ukprn integer,
 	name varchar(120) not null,
 	local_authority varchar(40) not null,
+	establishment_number integer null,
 	establishment_type establishment not null,
 	establishment_type_group establishment_group not null,
 	open boolean not null,
@@ -26,5 +27,10 @@ create table schools (
 	email_address varchar(64),
 	trust_code integer,
 	trust_name varchar(128),
-	headteacher_name varchar(128)
+	headteacher_name varchar(128),
+	address_1 varchar(128),
+	address_2 varchar(128),
+	address_3 varchar(128),
+	address_4 varchar(128),
+	postcode varchar(8)
 );

@@ -14,6 +14,7 @@ insert into schools (
 	urn,
 	ukprn,
 	name,
+	establishment_number,
 	establishment_type,
 	establishment_type_group,
 	open,
@@ -36,7 +37,12 @@ insert into schools (
 	email_address,
 	trust_code,
 	trust_name,
-	headteacher_name
+	headteacher_name,
+	address_1,
+	address_2,
+	address_3,
+	address_4,
+	postcode
 )
 
 select
@@ -48,6 +54,11 @@ select
 		sr."UKPRN"::integer
 	end,
 	sr."EstablishmentName",
+	case when (sr."EstablishmentNumber" is null or sr."EstablishmentNumber" = '')
+		then null
+	else
+		sr."EstablishmentNumber"::integer
+	end,
 	sr."TypeOfEstablishment (name)"::establishment,
 	sr."EstablishmentTypeGroup (name)"::establishment_group,
 
@@ -156,7 +167,13 @@ select
 	nullif(sr."Trusts (code)", '')::integer,
 	nullif(sr."Trusts (name)", ''),
 
-	nullif(sr."HeadFirstName" || ' ' || sr."HeadLastName", '')
+	nullif(sr."HeadFirstName" || ' ' || sr."HeadLastName", ''),
+	
+	nullif(sr."Street", ''),
+	nullif(sr."Locality", ''),
+	nullif(sr."Address3", ''),
+	nullif(sr."Town", ''),
+	nullif(sr."Postcode", '')
 
 from
 	schools_raw sr
