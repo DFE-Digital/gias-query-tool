@@ -32,5 +32,17 @@ create table schools (
 	address_2 varchar(128),
 	address_3 varchar(128),
 	address_4 varchar(128),
-	postcode varchar(8)
+	postcode varchar(8),
+
+	-- note concat_ws is mutable so can't be used in a generated column
+	address text generated always as (
+		nullif(
+			coalesce(address_1 || E'\n', '') ||
+			coalesce(address_2 || E'\n', '') ||
+			coalesce(address_3 || E'\n', '') ||
+			coalesce(address_4 || E'\n', '') ||
+			coalesce(postcode, ''),
+		''
+		)
+	) stored
 );
